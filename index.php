@@ -228,6 +228,15 @@ if (isset($_SESSION["user_id"])) {
                     document.getElementById(shortcuts[i].id.replace("-shortcut", "")).classList.remove("hidden");
                 });
             }
+            // Closable windows
+            let closeButtons = document.querySelectorAll('[aria-label="Close"]');
+            for (let i = 0, len = closeButtons.length; i < len; i++) {
+                closeButtons[i].addEventListener('click', function() {
+                    this.parentNode.parentNode.parentNode.classList.add("hidden"); //thing.thing.thing.thing.AAAAAAAAAA
+                    this.parentNode.parentNode.parentNode.style.top = '';
+                    this.parentNode.parentNode.parentNode.style.left = '';
+                });
+            }
         </script>
     </body>
 </html>
