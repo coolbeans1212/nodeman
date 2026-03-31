@@ -1,7 +1,7 @@
 // Shortcut colouring on hover/click
 let shortcuts = document.getElementsByClassName("shortcut");
 let shortcutContainer = document.getElementsByClassName("desktop-icons")[0];
-let selectedShortcut = null;
+let selectedShortcut = document.getElementById("javascript-sucks");
 for (let i  = 0, len = shortcuts.length; i < len; i++) {
     shortcuts[i].addEventListener('mouseover', function() {
         if (selectedShortcut !== this) {
@@ -24,7 +24,7 @@ for (let i  = 0, len = shortcuts.length; i < len; i++) {
 globalThis.addEventListener('mousedown', function () {
     if (!shortcutContainer.contains(event.target)) {
         selectedShortcut.style.background = '';
-        selectedShortcut = null;
+        selectedShortcut = document.getElementById("javascript-sucks");
     }
 });
 // Movable windows (stole half of this from codepen)

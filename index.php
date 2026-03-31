@@ -26,6 +26,7 @@ if (isset($_SESSION["user_id"])) {
     die();
 }
 
+require_once __DIR__ . "/forms.php";
 ?>
 
 <!DOCTYPE html>
@@ -73,6 +74,7 @@ if (isset($_SESSION["user_id"])) {
             }
             .window {
                 position: absolute;
+                min-width: 500px;
             }
         </style>
     </head>
@@ -95,7 +97,7 @@ if (isset($_SESSION["user_id"])) {
                 <span>Configure NPM</span>
             </div>
         </div>
-        <div class="window glass active hidden" id="projects" style="width: 500px; top: 10px; left: 10px;">
+        <div class="window glass active hidden" id="projects" style="top: 10px; left: 10px;">
             <div class="title-bar">
                 <div class="title-bar-text">Add or view projects</div>
                 <div class="title-bar-controls">
@@ -120,10 +122,22 @@ if (isset($_SESSION["user_id"])) {
                         ?>
                         <button role="tab" aria-controls="add">Add</button>
                     </menu>
+                    <?php
+                    $i = 0;
+                    foreach ($projects as $row) {
+                        ?><article role="tabpanel" id="<?php echo strtolower($row['name']);?>" <?php if($i != 0) { echo 'hidden'; } ?>>
+                            <?php createProjectsForm($row['name'], $row['location'], $row['main_file']); ?>
+                        </article><?php
+                        $i++;
+                    }
+                    ?>
+                    <article role="tabpanel" id="add" hidden>
+                        <?php createProjectsForm(); // blank form for the "Add" tab ?>
+                    </article>
                 </section>
             </div>
         </div>
-        <div class="window glass active hidden" id="status" style="width: 500px; top: 10px; left: 10px;">
+        <div class="window glass active hidden" id="status" style="top: 10px; left: 10px;">
             <div class="title-bar">
                 <div class="title-bar-text">Check or change status</div>
                 <div class="title-bar-controls">
@@ -134,7 +148,7 @@ if (isset($_SESSION["user_id"])) {
                 <p>The background behind is blurred.</p>
             </div>
         </div>
-        <div class="window glass active hidden" id="versions" style="width: 500px; top: 10px; left: 10px;">
+        <div class="window glass active hidden" id="versions" style="top: 10px; left: 10px;">
             <div class="title-bar">
                 <div class="title-bar-text">Rollback or upload version</div>
                 <div class="title-bar-controls">
@@ -145,7 +159,7 @@ if (isset($_SESSION["user_id"])) {
                 <p>The background behind is blurred.</p>
             </div>
         </div>
-        <div class="window glass active hidden" id="npm" style="width: 500px; top: 10px; left: 10px;">
+        <div class="window glass active hidden" id="npm" style="top: 10px; left: 10px;">
             <div class="title-bar">
                 <div class="title-bar-text">Configure NPM</div>
                 <div class="title-bar-controls">
@@ -158,4 +172,5 @@ if (isset($_SESSION["user_id"])) {
         </div>
         <script src="/main.js"></script>
     </body>
+    <div class="hidden" id="javascript-sucks"></div>
 </html>
