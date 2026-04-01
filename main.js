@@ -133,17 +133,23 @@ function makeTabsWork(tabListId) {
 makeTabsWork("projects-tabs");
 
 // Form submission
-function submitForm(type) {
+function submitForm(type, id) {
     console.log(type);
     if (type == "projects") {
-        let name = document.getElementById("projects-name").value;
-        let location = document.getElementById("projects-location").value;
-        let mainFile = document.getElementById("projects-main-file").value;
-        let doDelete = document.getElementById("projects-delete").checked; // JavaScript is so inconsistent... and NOT in a good way like PHP is >:(
+        let name = document.getElementById("projects-name-" + id).value;
+        let location = document.getElementById("projects-location-" + id).value;
+        let mainFile = document.getElementById("projects-main-file-" + id).value;
+        let doDelete = false;
+        try {
+            doDelete = document.getElementById("projects-delete-" + id).checked; // JavaScript is so inconsistent... and NOT in a good way like PHP is >:(
+        } catch {
+            doDelete = false;
+        }
         console.log(name, location, mainFile, doDelete);
         fetch(globalThis.location.origin + "/actions/projects.php", {
             method: "POST",
             body: JSON.stringify({
+                id: id,
                 name: name,
                 location: location,
                 mainFile: mainFile,
@@ -151,11 +157,13 @@ function submitForm(type) {
             })
         }).then(response => {
             if (response.ok) {
-                console.log("ok");
                 progressSuccess();
             } else {
                 progressFailure();
             }
+            return response.text();
+        }).then(data => {
+            console.log('Server response: ' + data);
         });
         progressReset();
     }

@@ -126,13 +126,13 @@ require_once __DIR__ . "/forms.php";
                     $i = 0;
                     foreach ($projects as $row) {
                         ?><article role="tabpanel" id="<?php echo strtolower($row['name']);?>" <?php if($i != 0) { echo 'hidden'; } ?>>
-                            <?php createProjectsForm(false, $row['name'], $row['location'], $row['main_file']); ?>
+                            <?php createProjectsForm(false, $row['id'], $row['name'], $row['location'], $row['main_file']); ?>
                         </article><?php
                         $i++;
                     }
                     ?>
                     <article role="tabpanel" id="add" hidden>
-                        <?php createProjectsForm(true); // blank form for the "Add" tab ?>
+                        <?php createProjectsForm(true, -1); // blank form for the "Add" tab ?>
                     </article>
                 </section>
             </div>
@@ -170,7 +170,7 @@ require_once __DIR__ . "/forms.php";
                 <p>The background behind is blurred.</p>
             </div>
         </div>
-        <div class="window glass active hidden" id="progress" style="top: 10px; left: 10px; z-index: 99999;">
+        <div class="window glass active hidden" id="progress" style="top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 99999;">
             <div class="title-bar">
                 <div class="title-bar-text">Processing...</div>
             </div>
