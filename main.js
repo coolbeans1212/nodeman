@@ -77,7 +77,9 @@ for (let i  = 0, len = windowsArray.length; i < len; i++) {
         windowsArray.unshift(windowsArray.splice(clickedWindow, 1)[0]); // move clicked window to the start of the array
         console.log(`hello i am window ${clickedWindow} in the array and i have caused the array to CHANGE. IT CHANGED.`)
         for (let j = 0, len = windowsArray.length; j < len; j++) {
-            windowsArray[j].style.zIndex = 10000 - j;
+            if (windowsArray[j].id != 'progress') { // this window should be always-on-top
+                windowsArray[j].style.zIndex = 10000 - j;
+            }
         }
     });
 }
@@ -85,6 +87,7 @@ for (let i  = 0, len = windowsArray.length; i < len; i++) {
 for (let i = 0, len = shortcuts.length; i < len; i++) {
     shortcuts[i].addEventListener('dblclick', function() {
         document.getElementById(shortcuts[i].id.replace("-shortcut", "")).classList.remove("hidden");
+        document.getElementById(shortcuts[i].id.replace("-shortcut", "")).style.zIndex = 50000; //make it appear on top of all windows initially
     });
 }
 // Closable windows
@@ -128,3 +131,65 @@ function makeTabsWork(tabListId) {
         }));
 }
 makeTabsWork("projects-tabs");
+
+// Form submission
+function submitForm(type) {
+    console.log(type);
+    if (type == "projects") {
+        let name = document.getElementById("projects-name").value;
+        let location = document.getElementById("projects-location").value;
+        let mainFile = document.getElementById("projects-main-file").value;
+        let doDelete = document.getElementById("projects-delete").checked; // JavaScript is so inconsistent... and NOT in a good way like PHP is >:(
+        console.log(name, location, mainFile, doDelete);
+        fetch(globalThis.location.origin + "/actions/projects.php", {
+            method: "POST",
+            body: JSON.stringify({
+                name: name,
+                location: location,
+                mainFile: mainFile,
+                delete: doDelete
+            })
+        }).then(response => {
+            if (response.ok) {
+                console.log("ok");
+                progressSuccess();
+            } else {
+                progressFailure();
+            }
+        });
+        progressReset();
+    }
+}
+
+// Progressbar shenanigans
+let progressWindow = document.getElementById("progress");
+let progressOk = document.getElementById("progress-ok");
+let progressbar = document.getElementById("progressbar");
+let progressMessage = document.getElementById("progress-message");
+function progressReset() {
+    progressMessage.innerHTML = 'Awaiting response from the server...';
+    progressOk.classList.add("hidden");
+    progressWindow.classList.remove("hidden");
+    progressbar.classList.add("marquee");
+    progressbar.classList.remove("error");
+}
+function progressFailure() {
+    progressOk.classList.remove("hidden");
+    progressbar.classList.remove("marquee");
+    progressbar.classList.add("error");
+    progressMessage.innerHTML = 'Failed. Check console.';
+}
+function progressCancel() {
+    progressOk.classList.remove("hidden");
+    progressbar.classList.remove("marquee");
+    progressbar.classList.add("error");
+    progressMessage.innerHTML = 'Cancelled.';
+}
+function progressSuccess() {
+    progressOk.classList.remove("hidden");
+    progressbar.classList.remove("marquee");
+    progressMessage.innerHTML = 'Success.';
+}
+progressOk.addEventListener('click', function() {
+    progressWindow.classList.add("hidden");
+});

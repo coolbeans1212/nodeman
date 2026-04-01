@@ -126,13 +126,13 @@ require_once __DIR__ . "/forms.php";
                     $i = 0;
                     foreach ($projects as $row) {
                         ?><article role="tabpanel" id="<?php echo strtolower($row['name']);?>" <?php if($i != 0) { echo 'hidden'; } ?>>
-                            <?php createProjectsForm($row['name'], $row['location'], $row['main_file']); ?>
+                            <?php createProjectsForm(false, $row['name'], $row['location'], $row['main_file']); ?>
                         </article><?php
                         $i++;
                     }
                     ?>
                     <article role="tabpanel" id="add" hidden>
-                        <?php createProjectsForm(); // blank form for the "Add" tab ?>
+                        <?php createProjectsForm(true); // blank form for the "Add" tab ?>
                     </article>
                 </section>
             </div>
@@ -168,6 +168,16 @@ require_once __DIR__ . "/forms.php";
             </div>
             <div class="window-body has-space">
                 <p>The background behind is blurred.</p>
+            </div>
+        </div>
+        <div class="window glass active hidden" id="progress" style="top: 10px; left: 10px; z-index: 99999;">
+            <div class="title-bar">
+                <div class="title-bar-text">Processing...</div>
+            </div>
+            <div class="window-body has-space">
+                <div role="progressbar" class="marquee" id="progressbar"><div class="width: 100%;"></div></div>
+                <p id="progress-message">Awaiting response from the server...</p>
+                <button id="progress-ok" class="hidden">OK</button>
             </div>
         </div>
         <script src="/main.js"></script>
