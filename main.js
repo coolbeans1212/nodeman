@@ -155,13 +155,14 @@ function submitForm(type, id) {
                 mainFile: mainFile,
                 delete: doDelete
             })
-        }).then(response => {
-            if (response.ok) {
+        }).then(async response => {
+            let responseText = await response.text();
+            if (response.ok && !responseText.includes("error")) {
                 progressSuccess();
             } else {
                 progressFailure();
             }
-            return response.text();
+            return responseText;
         }).then(data => {
             console.log('Server response: ' + data);
         });
