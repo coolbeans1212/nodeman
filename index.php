@@ -27,6 +27,7 @@ if (isset($_SESSION["user_id"])) {
 }
 
 require_once __DIR__ . "/forms.php";
+require_once __DIR__ . "/statuscheck.php";
 ?>
 
 <!DOCTYPE html>
@@ -75,6 +76,7 @@ require_once __DIR__ . "/forms.php";
             .window {
                 position: absolute;
                 min-width: 500px;
+                max-width: 80%;
             }
         </style>
     </head>
@@ -145,7 +147,25 @@ require_once __DIR__ . "/forms.php";
                 </div>
             </div>
             <div class="window-body has-space">
-                <p>The background behind is blurred.</p>
+                <section class="tabs">
+                    <menu role="tablist" aria-label="Status tabs" id="status-tabs">
+                        <?php
+                        $i = 0;
+                        foreach ($projects as $row) {
+                            ?><button role="tab" aria-controls="<?php echo strtolower($row['name']);?>"<?php if ($i == 0){ ?>aria-selected="true"<?php } ?>><?php echo $row['name'];?></button><?php
+                            $i++;
+                        } ?>
+                    </menu>
+                    <?php
+                    $i = 0;
+                    foreach ($projects as $row) {
+                        ?><article role="tabpanel" id="<?php echo strtolower($row['name']);?>" <?php if($i != 0) { echo 'hidden'; } ?>>
+                            <?php statusInfo($row['name']); ?>
+                        </article><?php
+                        $i++;
+                    }
+                    ?>
+                </section>
             </div>
         </div>
         <div class="window glass active hidden" id="versions" style="top: 10px; left: 10px;">

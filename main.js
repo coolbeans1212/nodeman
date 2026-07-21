@@ -131,6 +131,7 @@ function makeTabsWork(tabListId) {
         }));
 }
 makeTabsWork("projects-tabs");
+makeTabsWork("status-tabs");
 
 // Form submission
 function submitForm(type, id) {
@@ -152,13 +153,13 @@ function submitForm(type, id) {
                 id: id,
                 name: name,
                 location: location,
-                mainFile: mainFile,
+                main_file: mainFile,
                 delete: doDelete
             })
         }).then(async response => {
             let responseText = await response.text();
             if (response.ok && !responseText.includes("error")) {
-                progressSuccess();
+                progressSuccess(true);
             } else {
                 progressFailure();
             }
@@ -194,10 +195,14 @@ function progressCancel() {
     progressbar.classList.add("error");
     progressMessage.innerHTML = 'Cancelled.';
 }
-function progressSuccess() {
+function progressSuccess(refreshRequired) {
     progressOk.classList.remove("hidden");
     progressbar.classList.remove("marquee");
-    progressMessage.innerHTML = 'Success.';
+    if (refreshRequired) {
+        progressMessage.innerHTML = 'Success. Refresh the page to see the changes.';
+    } else {
+        progressMessage.innerHTML = 'Success.';
+    }
 }
 progressOk.addEventListener('click', function() {
     progressWindow.classList.add("hidden");
