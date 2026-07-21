@@ -165,9 +165,12 @@ function submitForm(type, id) {
             }
             return responseText;
         }).then(data => {
-            console.log('Server response: ' + data);
+            progressFailure(data);
         });
         progressReset();
+    }
+    if (type == "statuschange") {
+        console.log("meow");
     }
 }
 
@@ -183,11 +186,14 @@ function progressReset() {
     progressbar.classList.add("marquee");
     progressbar.classList.remove("error");
 }
-function progressFailure() {
+function progressFailure(error = "Awaiting data.") {
     progressOk.classList.remove("hidden");
     progressbar.classList.remove("marquee");
     progressbar.classList.add("error");
-    progressMessage.innerHTML = 'Failed. Check console.';
+    if (!error.endsWith('.')) {
+        error += '.'; // grammar fr fr
+    }
+    progressMessage.innerHTML = 'Failed. ' + error;
 }
 function progressCancel() {
     progressOk.classList.remove("hidden");

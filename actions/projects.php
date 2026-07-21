@@ -1,4 +1,5 @@
 <?php
+mysqli_report(MYSQLI_REPORT_OFF); // revert to pre-php 8.1 behaviour :)
 
 function sqlError($error) {
     header('HTTP 1/1 500 INTERNAL SERVER ERROR');
