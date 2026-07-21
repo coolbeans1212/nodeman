@@ -118,7 +118,7 @@ require_once __DIR__ . "/statuscheck.php";
                         }
                         $i = 0;
                         foreach ($projects as $row) {
-                            ?><button role="tab" aria-controls="<?php echo strtolower($row['name']);?>"<?php if ($i == 0){ ?>aria-selected="true"<?php } ?>><?php echo $row['name'];?></button><?php
+                            ?><button role="tab" aria-controls="<?php echo str_replace(' ', '-', strtolower($row['name']));?>"<?php if ($i == 0){ ?>aria-selected="true"<?php } ?>><?php echo $row['name'];?></button><?php
                             $i++;
                         }
                         ?>
@@ -127,7 +127,7 @@ require_once __DIR__ . "/statuscheck.php";
                     <?php
                     $i = 0;
                     foreach ($projects as $row) {
-                        ?><article role="tabpanel" id="<?php echo strtolower($row['name']);?>" <?php if($i != 0) { echo 'hidden'; } ?>>
+                        ?><article role="tabpanel" id="<?php echo str_replace(' ', '-', strtolower($row['name']));?>" <?php if($i != 0) { echo 'hidden'; } ?>>
                             <?php createProjectsForm(false, $row['id'], $row['name'], $row['location'], $row['main_file']); ?>
                         </article><?php
                         $i++;
@@ -152,15 +152,15 @@ require_once __DIR__ . "/statuscheck.php";
                         <?php
                         $i = 0;
                         foreach ($projects as $row) {
-                            ?><button role="tab" aria-controls="<?php echo strtolower($row['name']);?>"<?php if ($i == 0){ ?>aria-selected="true"<?php } ?>><?php echo $row['name'];?></button><?php
+                            ?><button role="tab" aria-controls="<?php echo str_replace(' ', '-', strtolower($row['name']));?>"<?php if ($i == 0){ ?>aria-selected="true"<?php } ?>><?php echo $row['name'];?></button><?php
                             $i++;
                         } ?>
                     </menu>
                     <?php
                     $i = 0;
                     foreach ($projects as $row) {
-                        ?><article role="tabpanel" id="<?php echo strtolower($row['name']);?>" <?php if($i != 0) { echo 'hidden'; } ?>>
-                            <?php statusInfo($row['name']); ?>
+                        ?><article role="tabpanel" id="<?php echo str_replace(' ', '-', strtolower($row['name']));?>" <?php if($i != 0) { echo 'hidden'; } ?>>
+                            <?php statusInfo($row['name']); controls($row['name']); ?>
                         </article><?php
                         $i++;
                     }

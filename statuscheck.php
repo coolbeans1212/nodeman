@@ -64,5 +64,13 @@ function statusInfo($projectName) {
             } ?></ul></div><br>
         <?php
     }
+}
+
+function controls($projectName) {
     echo '<hr>';
+    if (empty(checkStatus($projectName))) {
+        ?><button>START</button><?php
+    } else {
+        ?><button>STOP</button><?php
+    }
 }
