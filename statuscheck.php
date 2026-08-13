@@ -24,9 +24,19 @@ function stateCodes($codeString) {
     return $statesInCodeString;
 }
 
-function runningFor($timeWithColon) { //converts 33:58 into 33 hours, 58 minutes for example.
+function runningFor($timeWithColon) { //converts 33:08 into 33 hours, 8 minutes for example.
     $timeArray = explode(':', $timeWithColon);
-    return $timeArray[0] . ' hours, ' . $timeArray[1] . ' minutes';
+    $minutes = str_split($timeArray[1]);
+    if ($minutes[0] == '0') {
+        unset($minutes[0]);
+    }
+    $timeArray[1] = implode('', $minutes);
+    if ($timeArray[0] == 0) {
+        return $timeArray[1] . ' minutes';
+    } else {
+        return $timeArray[0] . ' hours, ' . $timeArray[1] . ' minutes';
+    }
+
 }
 
 function checkStatus($projectName) {
@@ -36,18 +46,18 @@ function checkStatus($projectName) {
         return stripos($line, $projectName) !== false;
     });
     $process = array_values($process);
+    $process = end($process);
+    $process = preg_split('/\s+/', trim($process), 11); // splits the output by spaces, only eleven times so that it doesn't split the COMMAND field of ps aux. side note: i may or may not be a little bit tipsy.
+    $process = array_filter($process, function($string) {
+        if (!empty($string)) {
+            return true;
+        }
+    });
     return $process;
 }
 
 function statusInfo($projectName) {
     $runStatus = checkStatus($projectName);
-    $runStatus = end($runStatus);
-    $runStatus = preg_split('/\s+/', trim($runStatus), 11); // splits the output by spaces, only eleven times so that it doesn't split the COMMAND field of ps aux. side note: i may or may not be a little bit tipsy.
-    $runStatus = array_filter($runStatus, function($string) {
-        if (!empty($string)) {
-            return true;
-        }
-    });
     if (empty($runStatus)){
         echo $projectName . ' is <b style="color: red;">DOWN</b>.<br>';
     } else {
@@ -67,10 +77,15 @@ function statusInfo($projectName) {
 }
 
 function controls($projectName) {
-    echo '<hr>';
+    ?><hr><?php
     if (empty(checkStatus($projectName))) {
-        ?><button>START</button><?php
+        ?><button class="status-change-button start-project-button" id="start-<?php echo $projectName;?>">START</button>
+          <button disabled>STOP</button>
+          <button disabled>FORCE STOP</button><?php
     } else {
-        ?><button>STOP</button><?php
+        ?><button disabled>START</button>
+          <button class="status-change-button stop-project-button" id="stop-<?php echo $projectName;?>">STOP</button>
+          <button class="status-change-button force-stop-project-button" id="force-stop-<?php echo $projectName;?>">FORCE STOP</button><?php
     }
+    ?><?php
 }

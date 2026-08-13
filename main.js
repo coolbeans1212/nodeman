@@ -134,8 +134,10 @@ makeTabsWork("projects-tabs");
 makeTabsWork("status-tabs");
 
 // Form submission
+let failed = false;
 function submitForm(type, id) {
     console.log(type);
+    progressReset();
     if (type == "projects") {
         let name = document.getElementById("projects-name-" + id).value;
         let location = document.getElementById("projects-location-" + id).value;
@@ -158,21 +160,48 @@ function submitForm(type, id) {
             })
         }).then(async response => {
             let responseText = await response.text();
+            console.log(response.ok);
             if (response.ok && !responseText.includes("error")) {
+                failed = false;
                 progressSuccess(true);
             } else {
+                failed = true;
                 progressFailure();
             }
             return responseText;
         }).then(data => {
-            progressFailure(data);
+            if (failed) {
+                progressFailure(data);
+            }
         });
-        progressReset();
-    }
-    if (type == "statuschange") {
-        console.log("meow");
     }
 }
+// me when you press the START/STOP/FORCE STOP buttons in startstop.php:
+let statusChangeButtons = document.getElementsByClassName("status-change-button");
+Array.from(statusChangeButtons).forEach((startButton) => startButton.addEventListener('click', function() {
+    progressReset();
+    fetch(globalThis.window.origin + "/actions/startstop.php", {
+        method: "POST",
+        body: JSON.stringify({
+            id: startButton.id,
+        })
+    }).then(async response => {
+        let responseText = await response.text();
+        if (response.ok && !responseText.includes("error")) {
+            failed = false;
+            progressSuccess(true);
+        } else {
+            failed = true;
+            progressFailure();
+        }
+        return responseText;
+    }).then(data => {
+        if (failed) {
+            progressFailure(data);
+        }
+    });
+}));
+
 
 // Progressbar shenanigans
 let progressWindow = document.getElementById("progress");
