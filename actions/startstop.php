@@ -30,7 +30,7 @@ function startProject($project, $location, $main_file, $env) {
     if (!is_dir($env['LOGSLOCATION'] . $project)) { // we need to make sure that www-data has access to this directory!!!!!
         mkdir($env['LOGSLOCATION'] . $project, 0775, true);
     }
-    $cmd = sprintf("setsid %s %s > %s 2>&1 &",
+    $cmd = sprintf("setsid %s %s > %s 2>&1 < /dev/null &",
     escapeshellarg($env['NODEBINARYLOCATION']),
     escapeshellarg($location . $main_file),
     escapeshellarg($env['LOGSLOCATION'] . $project . '/' . time() . '.log')); // i just discovered this function it's so cool
