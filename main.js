@@ -88,6 +88,7 @@ for (let i = 0, len = shortcuts.length; i < len; i++) {
     shortcuts[i].addEventListener('dblclick', function() {
         document.getElementById(shortcuts[i].id.replace("-shortcut", "")).classList.remove("hidden");
         document.getElementById(shortcuts[i].id.replace("-shortcut", "")).style.zIndex = 50000; //make it appear on top of all windows initially
+        scrollLogsToBottom();
     });
 }
 // Closable windows
@@ -124,6 +125,7 @@ function makeTabsWork(tabListId) {
     tabButtons.forEach((tabButton) =>
         tabButton.addEventListener("mousedown", (evt) => {
           tabHandler(evt, tabButtons)
+          scrollLogsToBottom();
         }));
     tabButtons.forEach((tabButton) =>
         tabButton.addEventListener("focus", (evt) => {
@@ -242,3 +244,11 @@ function progressSuccess(refreshRequired) {
 progressOk.addEventListener('click', function() {
     progressWindow.classList.add("hidden");
 });
+
+// make logs automagically scroll to the bottom :3
+function scrollLogsToBottom() {
+    let logs = document.getElementsByClassName("logs");
+    for (let logTextarea of logs) {
+        logTextarea.scrollTop = logTextarea.scrollHeight;
+    }
+}

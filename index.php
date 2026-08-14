@@ -134,7 +134,7 @@ require_once __DIR__ . "/statuscheck.php";
                     $i = 0;
                     foreach ($projects as $row) {
                         ?><article role="tabpanel" id="<?php echo str_replace(' ', '-', strtolower($row['name']));?>" <?php if($i != 0) { echo 'hidden'; } ?>>
-                            <?php statusInfo($row['name']); controls($row['name']); ?>
+                            <?php statusInfo($row['name']); logs($row['name'], $env); controls($row['name']); ?>
                         </article><?php
                         $i++;
                     }

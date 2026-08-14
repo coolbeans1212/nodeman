@@ -1,4 +1,38 @@
 <?php
+
+function ago($unixTimestamp) {
+    $unixTimeAgo = time() - $unixTimestamp;
+    $times = ['year' => 31557600, 'month' => 2629800, 'day' => 86400, 'hour' => 3600, 'minute' => 60, 'second' => 1];
+    $timeAgo = [0, 0, 0, 0, 0, 0];
+    $i = 0;
+    foreach ($times as $unit => $seconds) {
+        while (true) {
+            if ($unixTimeAgo - $seconds >= 0) {
+                $timeAgo[$i]++;
+                $unixTimeAgo = $unixTimeAgo - $seconds;
+            } else {
+                break;
+            }
+        }
+        $i++;
+    }
+    $timeAgoStr = '';
+    $i = 0;
+    foreach ($timeAgo as $time) {
+        if ($time != 0) {
+            $timeAgoStr .= $time . ' ' . array_keys($times)[$i];
+            if ($time > 1) {
+                $timeAgoStr .= 's'; // plural
+            }
+            if ($i < count($times) - 1) {
+                $timeAgoStr .= ', ';
+            }
+        }
+        $i++;
+    }
+    return $timeAgoStr;
+}
+
 function stateCodes($codeString) {
     $stateCodes = ['D' => 'Uninterruptible sleep',
                    'I' => 'Idle kernel thread',
@@ -73,6 +107,22 @@ function statusInfo($projectName) {
                 echo '<li>' . $stateCode . '</li>';
             } ?></ul></div><br>
         <?php
+    }
+}
+
+function logs($projectName, $env) {
+    ?><hr><?php
+    if (!is_dir($env['LOGSLOCATION'] . $projectName)) {
+        echo 'No logs...';
+        return -1;
+    }
+    $scandir = scandir($env['LOGSLOCATION'] . $projectName, SCANDIR_SORT_DESCENDING);
+    if (is_file($env['LOGSLOCATION'] . $projectName . '/' . $scandir[0])) {
+        echo 'Logs from the start-up ' . ago(pathinfo($scandir[0], PATHINFO_FILENAME)) . ' ago.<br>';
+        echo '<textarea readonly style="width: 100%; height: 200px;" class="logs">' . file_get_contents($env['LOGSLOCATION'] . $projectName . '/' . $scandir[0]) . '</textarea>'; // with SCANDIR_SORT_DESCENDING and logs created with the filename of the UNIX timestamp, $scandir[0] will be the latest log
+    } else {
+        echo 'No logs...';
+        return -1;
     }
 }
 
