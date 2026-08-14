@@ -2,6 +2,22 @@
 require_once __DIR__ . "/isAdminAndParseEnv.php";
 require_once __DIR__ . "/forms.php";
 require_once __DIR__ . "/statuscheck.php";
+
+$sql = 'SELECT * FROM projects';
+$result = $mysqli->query($sql);
+$projects = [];
+while ($row = mysqli_fetch_assoc($result)) {
+    $projects[] = $row;
+}
+
+function createTabs($projects) {
+    $i = 0;
+    foreach ($projects as $row) {
+        ?><button role="tab" aria-controls="<?php echo str_replace(' ', '-', strtolower($row['name']));?>"<?php if ($i == 0){ ?>aria-selected="true"<?php } ?>><?php echo $row['name'];?></button><?php
+        $i++;
+    }
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -83,19 +99,7 @@ require_once __DIR__ . "/statuscheck.php";
             <div class="window-body has-space">
                 <section class="tabs">
                     <menu role="tablist" aria-label="Projects tabs" id="projects-tabs">
-                        <?php
-                        $sql = 'SELECT * FROM projects';
-                        $result = $mysqli->query($sql);
-                        $projects = [];
-                        while ($row = mysqli_fetch_assoc($result)) {
-                            $projects[] = $row;
-                        }
-                        $i = 0;
-                        foreach ($projects as $row) {
-                            ?><button role="tab" aria-controls="<?php echo str_replace(' ', '-', strtolower($row['name']));?>"<?php if ($i == 0){ ?>aria-selected="true"<?php } ?>><?php echo $row['name'];?></button><?php
-                            $i++;
-                        }
-                        ?>
+                        <?php createTabs($projects); ?>
                         <button role="tab" aria-controls="add">Add</button>
                     </menu>
                     <?php
@@ -123,12 +127,7 @@ require_once __DIR__ . "/statuscheck.php";
             <div class="window-body has-space">
                 <section class="tabs">
                     <menu role="tablist" aria-label="Status tabs" id="status-tabs">
-                        <?php
-                        $i = 0;
-                        foreach ($projects as $row) {
-                            ?><button role="tab" aria-controls="<?php echo str_replace(' ', '-', strtolower($row['name']));?>"<?php if ($i == 0){ ?>aria-selected="true"<?php } ?>><?php echo $row['name'];?></button><?php
-                            $i++;
-                        } ?>
+                        <?php createTabs($projects); ?>
                     </menu>
                     <?php
                     $i = 0;
