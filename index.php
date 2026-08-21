@@ -29,7 +29,7 @@ function createTabs($projects) {
         <style>
             body {
                 background-color: #001310;
-                background-image: url('https://mateishome.page/files/images/main_site_background_image.png');
+                background-image: url('https://mateishome.page/files/images/main_site_background_image.webp');
                 background-position: top center;
                 background-repeat: no-repeat;
                 font: var(--w7-font);
