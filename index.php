@@ -2,6 +2,7 @@
 require_once __DIR__ . "/isAdminAndParseEnv.php";
 require_once __DIR__ . "/forms.php";
 require_once __DIR__ . "/statuscheck.php";
+require_once __DIR__ . "/versions.php";
 
 $sql = 'SELECT * FROM projects';
 $result = $mysqli->query($sql);
@@ -67,6 +68,91 @@ function createTabs($projects) {
                 position: absolute;
                 min-width: 500px;
                 max-width: 80%;
+            }
+            .directory-upload-box {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background-color: #ececec;
+                height: 150px;
+                width: 75%;
+                margin-left: auto;
+                margin-right: auto;
+                cursor: pointer;
+            }
+            .directory-upload-hidden {
+                display: none;
+            }
+            .version {
+                display: flex;
+                background-color: #fefefe;
+                width: 75%;
+                min-height: 75px;
+                margin-left: auto;
+                margin-right: auto;
+                border: 1px solid #ececec;
+            }
+            .version-name-bg {
+                font-size: 60px;
+                overflow: hidden;
+                text-wrap: nowrap;
+                color: #00000011;
+                position: absolute;
+                -webkit-user-select: none;
+                user-select: none;
+                width: calc(70% - 10px);
+                padding-left: 10px;
+                transform: translateY(-10px);
+            }
+            .version-inner {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                padding: 10px;
+                z-index: 0; /* this allows the text to be selectable while the text in the background still cannot be */
+                width: calc(100% - 20px);
+            }
+            .version-inner-left {
+                text-align: left;
+                width: 80%;
+            }
+            .version-inner-right {
+                display: flex;
+                flex-direction: column;
+                text-align: right;
+            }
+            .version-inner-right button {
+                margin: 2px;
+            }
+            .version-name {
+                font-size: 20px;
+                max-width: 100%;
+                overflow: hidden;
+                display: inline-block;
+            }
+            .inactive-page {
+                display: none;
+            }
+            .page-selector-wrapper {
+                overflow-wrap: anywhere;
+                display: flex;
+                justify-content: center;
+            }
+            .page-selector, .selected-page-selector {
+                display: inline;
+                margin: 3px;
+                font-size: 15px;
+                border: 1px solid #ececec;
+                min-width: 20px;
+                text-align: center;
+            }
+            .page-selector {
+                background: #f0f0f0;
+                cursor: pointer;
+            }
+            .selected-page-selector {
+                cursor: default;
+                background: #cfcfcf;
             }
         </style>
     </head>
@@ -149,7 +235,20 @@ function createTabs($projects) {
                 </div>
             </div>
             <div class="window-body has-space">
-                <p>The background behind is blurred.</p>
+                <section class="tabs">
+                    <menu role="tablist" aria-label="Version tabs" id="version-tabs">
+                        <?php createTabs($projects); ?>
+                    </menu>
+                    <?php
+                    $i = 0;
+                    foreach ($projects as $row) {
+                        ?><article role="tabpanel" id="<?php echo str_replace(' ', '-', strtolower($row['name']));?>" <?php if($i != 0) { echo 'hidden'; } ?>>
+                            <?php createDirectoryUploadForm($row['id']); ?><hr><?php makeVersionPages($row['id'], 2); ?>
+                        </article><?php
+                        $i++;
+                    }
+                    ?>
+                </section>
             </div>
         </div>
         <div class="window glass active hidden" id="npm" style="top: 10px; left: 10px;">

@@ -22,3 +22,13 @@ function createProjectsForm($new = false, $id = 0, $name = '', $location = '', $
     <?php
 }
 
+function createDirectoryUploadForm($id = 0) {
+    ?>
+    <form action="javascript:submitForm('version-upload', <?php echo $id;?>)">
+        <div class="directory-upload-box" id="version-box-<?php echo $id;?>">
+            <div>Click here to upload a new version.</div>
+        </div>
+        <input class="directory-upload-hidden" type="file" id="version-hidden-<?php echo $id;?>" directory webkitdirectory mozdirectory>
+    </form>
+    <?php
+}

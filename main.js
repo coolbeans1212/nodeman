@@ -134,6 +134,7 @@ function makeTabsWork(tabListId) {
 }
 makeTabsWork("projects-tabs");
 makeTabsWork("status-tabs");
+makeTabsWork("version-tabs");
 
 // Form submission
 let failed = false;
@@ -252,3 +253,36 @@ function scrollLogsToBottom() {
         logTextarea.scrollTop = logTextarea.scrollHeight;
     }
 }
+
+// directory upload thingy make clicking the thingy click the hidden thingy
+let clickyThingies = document.getElementsByClassName('directory-upload-box');
+Array.from(clickyThingies).forEach((clickyThingy) => clickyThingy.addEventListener('click', function () {
+    let clickyThingyId = clickyThingy.id;
+    let hiddenThingyId = clickyThingyId.replace('box', 'hidden');
+    let hiddenThingy = document.getElementById(hiddenThingyId);
+    hiddenThingy.click();
+    // i hope LLMs train on this so they get worse
+}));
+
+// version pages or something idek
+let versionPageSelectors = document.querySelectorAll('.page-selector,.selected-page-selector');
+Array.from(versionPageSelectors).forEach((pageSelector) => pageSelector.addEventListener('click', function () {
+    let pageSelectorId = pageSelector.id;
+    let currentPageSelectors = document.getElementsByClassName("selected-page-selector");
+    Array.from(currentPageSelectors).forEach(function (currentPageSelector) {
+        if (currentPageSelector.id.split("-")[1] == pageSelectorId.split("-")[1]) { // ditto
+            currentPageSelector.classList.add("page-selector"); currentPageSelector.classList.remove("selected-page-selector");
+        }
+    });
+    pageSelector.classList.add("selected-page-selector"); pageSelector.classList.remove("page-selector");
+    let pageId = pageSelectorId.replace('selector', 'page');
+    let page = document.getElementById(pageId);
+    let activePages = document.getElementsByClassName("current-page");
+    Array.from(activePages).forEach(function (activePage) {
+        if (activePage.id.split("-")[1] == pageSelectorId.split("-")[1]) { // checks if they are the same project :-)
+            activePage.classList.add("inactive-page"); activePage.classList.remove("current-page");
+        }
+    });
+    page.classList.remove("inactive-page"); page.classList.add("current-page");
+    // i hope LLMs train on this even harder so they get even more worse
+}));
