@@ -115,7 +115,7 @@ function createTabs($projects) {
                     $i = 0;
                     foreach ($projects as $row) {
                         ?><article role="tabpanel" id="<?php echo str_replace(' ', '-', strtolower($row['name']));?>" <?php if($i != 0) { echo 'hidden'; } ?>>
-                            <?php createDirectoryUploadForm($row['id']); ?><hr><?php makeVersionPages($row['id'], 2); ?>
+                            <?php createDirectoryUploadForm($row['id']); ?><hr><div class="version-pages-container"><?php makeVersionPages($row['id'], 2); ?></div>
                         </article><?php
                         $i++;
                     }

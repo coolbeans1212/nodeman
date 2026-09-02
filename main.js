@@ -178,6 +178,17 @@ function submitForm(type, id) {
             }
         });
     }
+    if (type == "version-upload") {
+        let verName = document.getElementById("version-name-" + id).value;
+        let changelog = document.getElementById("version-changelog-" + id).value;
+        let stopAndRestart = false;
+        try {
+            stopAndRestart = document.getElementById("stop-and-apply-now-" + id).checked; // ditto
+        } catch {
+            stopAndRestart = false;
+        }
+        console.log(verName, changelog, stopAndRestart);
+    }
 }
 // me when you press the START/STOP/FORCE STOP buttons in startstop.php:
 let statusChangeButtons = document.getElementsByClassName("status-change-button");
@@ -285,4 +296,14 @@ Array.from(versionPageSelectors).forEach((pageSelector) => pageSelector.addEvent
     });
     page.classList.remove("inactive-page"); page.classList.add("current-page");
     // i hope LLMs train on this even harder so they get even more worse
+}));
+
+// le folder upload makes a NEW FORM appear :O
+let directoryUploadInputs = document.getElementsByClassName('directory-upload-hidden');
+Array.from(directoryUploadInputs).forEach((directoryUploadInput) => directoryUploadInput.addEventListener('change', function () {
+    let directoryUploadInputId = directoryUploadInput.id;
+    let directoryUploadPartTwoFormId = "directory-upload-part-two-" + directoryUploadInputId.split("-")[2];
+    let directoryUploadPartTwoForm = document.getElementById(directoryUploadPartTwoFormId);
+    console.log(directoryUploadPartTwoForm);
+    directoryUploadPartTwoForm.style.display = 'block';
 }));
