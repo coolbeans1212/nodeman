@@ -176,9 +176,13 @@ function submitForm(type, id) {
             if (failed) {
                 progressFailure(data);
             }
+        }).catch(error => {
+            failed = true;
+            progressFailure(error.toString());
         });
     }
     if (type == "version-upload") {
+        let directoryInput = document.getElementById("version-hidden-" + id);
         let verName = document.getElementById("version-name-" + id).value;
         let changelog = document.getElementById("version-changelog-" + id).value;
         let stopAndRestart = false;
@@ -187,7 +191,52 @@ function submitForm(type, id) {
         } catch {
             stopAndRestart = false;
         }
-        console.log(verName, changelog, stopAndRestart);
+        let setToCurrentVersion = false;
+        try {
+            setToCurrentVersion = document.getElementById("set-to-current-version-" + id).checked; // ditto
+        } catch {
+            setToCurrentVersion = false;
+        }
+        let formData = new FormData(); // meow
+        formData.append("id", id);
+        formData.append("ver_name", verName);
+        formData.append("changelog", changelog);
+        formData.append("stop_and_restart", stopAndRestart);
+        formData.append("set_to_current_version", setToCurrentVersion);
+        for (const file of directoryInput.files) {
+            try {
+                let path = file.webkitRelativePath;
+                path = path.substring(path.indexOf('/') + 1); // remove everything up to and including the first / character (so that trying to run index.js doesn't fail because it's actually in project/index.js)
+                formData.append("files[]", file, path);
+            } catch {
+                progressFailure("Your browser does not support webkitRelativePath. Please update to one of the browsers listed <a href=\"https://developer.mozilla.org/en-US/docs/Web/API/File/webkitRelativePath#browser_compatibility\">here</a>, or newer.");
+                return -1;
+            }
+        }
+        fetch(globalThis.location.origin + "/actions/version.php", {
+            method: "POST",
+            body: formData,
+
+        }).then(async response => {
+            let responseText = await response.text();
+            console.log(response.ok);
+            if (response.ok && !responseText.includes("error")) {
+                failed = false;
+                progressSuccess(true);
+            } else {
+                failed = true;
+                progressFailure();
+            }
+            return responseText;
+        }).then(data => {
+            if (failed) {
+                progressFailure(data);
+            }
+        }).catch(error => {
+            failed = true;
+            progressFailure(error.toString());
+        });
+        console.log(verName, changelog, stopAndRestart, formData);
     }
 }
 // me when you press the START/STOP/FORCE STOP buttons in startstop.php:
@@ -306,4 +355,16 @@ Array.from(directoryUploadInputs).forEach((directoryUploadInput) => directoryUpl
     let directoryUploadPartTwoForm = document.getElementById(directoryUploadPartTwoFormId);
     console.log(directoryUploadPartTwoForm);
     directoryUploadPartTwoForm.style.display = 'block';
+}));
+// and THEN. when you uncheck the thing that stops the current version... you get another choice :3
+let stopAndApplyNowCheckboxes = document.getElementsByClassName("stop-and-apply-now-checkbox");
+Array.from(stopAndApplyNowCheckboxes).forEach((stopAndApplyNowCheckbox) => stopAndApplyNowCheckbox.addEventListener('change', function () {
+    let stopAndApplyNowCheckboxId = stopAndApplyNowCheckbox.id;
+    let hiddenId = "hidden-unless-stop-and-apply-now-is-unchecked-" + stopAndApplyNowCheckboxId.split("-")[4];
+    let hiddenUnlessThisChecked = document.getElementById(hiddenId);
+    if (stopAndApplyNowCheckbox.checked) {
+        hiddenUnlessThisChecked.classList.add('hidden');
+    } else {
+        hiddenUnlessThisChecked.classList.remove('hidden');
+    }
 }));
