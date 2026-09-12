@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->execute();
             $result = $stmt->get_result();
             $projectDeets = $result->fetch_assoc();
-            startProject($projectName, $projectDeets['location'], $projectDeets['main_file'], $env);
+            startProject($projectName, $projectDeets['location'] . $projectDeets['current_version'] . DIRECTORY_SEPARATOR, $projectDeets['main_file'], $env);
             break;
         default:
             error("No action was provided.");
