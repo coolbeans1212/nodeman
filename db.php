@@ -1,10 +1,10 @@
 <?php
 $env = parse_ini_file(__DIR__ . '/.env');
 
-$dbhost = 'localhost';
-$dbuser = 'root';
+$dbhost = trim($env['DBADDRESS']);
+$dbuser = trim($env['DBUSER']);
 $dbpass = trim($env['DBPASSWORD']);
-$db = 'nodeman';
+$db = trim($env['NODEMANDBNAME']);
 $mysqli = new mysqli($dbhost, $dbuser, $dbpass, $db);
   
 if ($mysqli->connect_errno) {
