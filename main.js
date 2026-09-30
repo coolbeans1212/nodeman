@@ -368,3 +368,18 @@ Array.from(stopAndApplyNowCheckboxes).forEach((stopAndApplyNowCheckbox) => stopA
         hiddenUnlessThisChecked.classList.remove('hidden');
     }
 }));
+
+// handle version changelog textarea character counting
+let versionChangelogTextareas = document.getElementsByClassName('version-changelog');
+Array.from(versionChangelogTextareas).forEach((versionChangelogTextarea) => versionChangelogTextarea.addEventListener('input', function () {
+    let versionChangelogTextareaId = versionChangelogTextarea.id;
+    let versionChangelogWordCountId = "version-changelog-word-count-" + versionChangelogTextareaId.split("-")[2];
+    console.log(versionChangelogWordCountId);
+    let versionChangelogWordCount = document.getElementById(versionChangelogWordCountId);
+    versionChangelogWordCount.innerHTML = versionChangelogTextarea.value.length;
+    if (versionChangelogTextarea.value.length > 450) {
+        versionChangelogWordCount.parentElement.style.color = 'red';
+    } else {
+        versionChangelogWordCount.parentElement.style.color = null;
+    }
+}));
