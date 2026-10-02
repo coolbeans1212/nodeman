@@ -282,6 +282,9 @@ function progressReset() {
     progressbar.classList.remove("error");
 }
 function progressFailure(error = "Awaiting data.") {
+    if (Error.isError(error)) {
+        error = error.toString();
+    }
     progressOk.classList.remove("hidden");
     progressbar.classList.remove("marquee");
     progressbar.classList.add("error");
