@@ -262,6 +262,9 @@ Array.from(statusChangeButtons).forEach((startButton) => startButton.addEventLis
         if (failed) {
             progressFailure(data);
         }
+    }).catch(error => {
+        failed = true;
+        progressFailure(error.toString());
     });
 }));
 
