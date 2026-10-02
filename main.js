@@ -1,7 +1,12 @@
-// Shortcut colouring on hover/click
 let shortcuts = document.getElementsByClassName("shortcut");
 let shortcutContainer = document.getElementsByClassName("desktop-icons")[0];
 let selectedShortcut = document.getElementById("javascript-sucks");
+
+let windows = document.getElementsByClassName("window");
+let windowsArray = Array.from(windows);
+
+
+// Shortcut colouring on hover/click
 for (let i  = 0, len = shortcuts.length; i < len; i++) {
     shortcuts[i].addEventListener('mouseover', function() {
         if (selectedShortcut !== this) {
@@ -28,7 +33,6 @@ globalThis.addEventListener('mousedown', function () {
     }
 });
 // Movable windows (stole half of this from codepen)
-let windows = document.getElementsByClassName("window");
 function makeDraggable (element) {
     //Make an element draggable (or if it has a .title-bar class, drag based on the .title-bar element)
     let currentPosX = 0,
@@ -70,7 +74,6 @@ for (let i  = 0, len = windows.length; i < len; i++) {
     makeDraggable(windows[i]);
 }
 // Z-Index handling
-let windowsArray = Array.from(windows);
 for (let i  = 0, len = windowsArray.length; i < len; i++) {
     windows[i].addEventListener('mousedown', function() {
         let clickedWindow = windowsArray.indexOf(this);
@@ -92,14 +95,20 @@ for (let i = 0, len = shortcuts.length; i < len; i++) {
     });
 }
 // Closable windows
-let closeButtons = document.querySelectorAll('[aria-label="Close"]');
-for (let i = 0, len = closeButtons.length; i < len; i++) {
-    closeButtons[i].addEventListener('click', function() {
-        this.parentNode.parentNode.parentNode.classList.add("hidden"); //thing.thing.thing.thing.AAAAAAAAAA
-        this.parentNode.parentNode.parentNode.style.top = '10px';
-        this.parentNode.parentNode.parentNode.style.left = '10px';
-    });
+function closeWindowHandler(element) {
+    let closebutton = element.querySelector('[aria-label="Close"]')
+    if (closebutton != null) {
+        closebutton.addEventListener('click', function() {
+            element.classList.add("hidden");
+            element.style.top = '10px';
+            element.style.left = '10px';
+        });
+    }
 }
+windowsArray.forEach(window => {
+    closeWindowHandler(window);
+});
+
 
 // Tabs that actually work (stolen from 7.css)
 function tabHandler(e, tabButtons) {
@@ -389,3 +398,31 @@ Array.from(versionChangelogTextareas).forEach((versionChangelogTextarea) => vers
         versionChangelogWordCount.parentElement.style.color = null;
     }
 }));
+
+// what if we need a lil dialogue box ;)
+class DialogueBox {
+    constructor(id, title, elements) {
+        let originaldialoguebox = document.getElementById("dialogue");
+        let dialoguebox = originaldialoguebox.cloneNode(true);
+        let dialogueboxinner = dialoguebox.getElementsByClassName("window-body")[0];
+        this.element = dialoguebox;
+        dialoguebox.id = id;
+        dialoguebox.getElementsByClassName("title-bar-text")[0].innerHTML = title;
+        elements.forEach((element) => {
+            console.log(element);
+            let realelement = document.createElement(element["type"]);
+            realelement.innerHTML = element["innerhtml"];
+            dialogueboxinner.appendChild(realelement);
+        })
+
+        document.body.appendChild(dialoguebox);
+        makeDraggable(dialoguebox);
+        closeWindowHandler(dialoguebox);
+    }
+    show() {
+        this.element.classList.remove("hidden");
+    }
+    hide() {
+        this.element.classList.add("hidden");
+    }
+}

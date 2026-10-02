@@ -144,6 +144,17 @@ function createTabs($projects) {
                 <button id="progress-ok" class="hidden">OK</button>
             </div>
         </div>
+    <div class="window glass active hidden" id="dialogue" style="top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 99999;">
+            <div class="title-bar">
+                <div class="title-bar-text">Dialogue Box</div>
+                <div class="title-bar-controls">
+                    <button aria-label="Close"></button>
+                </div>
+            </div>
+            <div class="window-body has-space">
+                <!-- nothing here... -->
+            </div>
+    </div>
         <script src="/main.js"></script>
     </body>
     <div class="hidden" id="javascript-sucks"></div>
