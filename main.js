@@ -98,11 +98,17 @@ for (let i = 0, len = shortcuts.length; i < len; i++) {
 function closeWindowHandler(element) {
     let closebutton = element.querySelector('[aria-label="Close"]')
     if (closebutton != null) {
-        closebutton.addEventListener('click', function() {
-            element.classList.add("hidden");
-            element.style.top = '10px';
-            element.style.left = '10px';
-        });
+        if (element.id.includes('dialogue')) {
+            closebutton.addEventListener('click', function() {
+                element.remove();
+            });
+        } else {
+            closebutton.addEventListener('click', function() {
+                element.classList.add("hidden");
+                element.style.top = '10px';
+                element.style.left = '10px';
+            });
+        }
     }
 }
 windowsArray.forEach(window => {
