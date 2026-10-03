@@ -156,6 +156,7 @@ function createTabs($projects) {
             </div>
     </div>
         <script src="/main.js"></script>
+        <script src="/forms.js"></script>
     </body>
     <div class="hidden" id="javascript-sucks"></div>
 </html>

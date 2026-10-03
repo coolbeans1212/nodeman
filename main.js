@@ -145,145 +145,6 @@ makeTabsWork("projects-tabs");
 makeTabsWork("status-tabs");
 makeTabsWork("version-tabs");
 
-// Form submission
-let failed = false;
-function submitForm(type, id) {
-    console.log(type);
-    progressReset();
-    if (type == "projects") {
-        let name = document.getElementById("projects-name-" + id).value;
-        let location = document.getElementById("projects-location-" + id).value;
-        let mainFile = document.getElementById("projects-main-file-" + id).value;
-        let doDelete = false;
-        try {
-            doDelete = document.getElementById("projects-delete-" + id).checked; // JavaScript is so inconsistent... and NOT in a good way like PHP is >:(
-        } catch {
-            doDelete = false;
-        }
-        console.log(name, location, mainFile, doDelete);
-        fetch(globalThis.location.origin + "/actions/projects.php", {
-            method: "POST",
-            body: JSON.stringify({
-                id: id,
-                name: name,
-                location: location,
-                main_file: mainFile,
-                delete: doDelete
-            })
-        }).then(async response => {
-            let responseText = await response.text();
-            console.log(response.ok);
-            if (response.ok && !responseText.includes("error")) {
-                failed = false;
-                progressSuccess(true);
-            } else {
-                failed = true;
-                progressFailure();
-            }
-            return responseText;
-        }).then(data => {
-            if (failed) {
-                progressFailure(data);
-            }
-        }).catch(error => {
-            failed = true;
-            progressFailure(error.toString());
-        });
-    }
-    if (type == "version-upload") {
-        let directoryInput = document.getElementById("version-hidden-" + id);
-        let verName = document.getElementById("version-name-" + id).value;
-        let changelog = document.getElementById("version-changelog-" + id).value;
-        let stopAndRestart = false;
-        try {
-            stopAndRestart = document.getElementById("stop-and-apply-now-" + id).checked; // ditto
-        } catch {
-            stopAndRestart = false;
-        }
-        let setToCurrentVersion = false;
-        try {
-            setToCurrentVersion = document.getElementById("set-to-current-version-" + id).checked; // ditto
-        } catch {
-            setToCurrentVersion = false;
-        }
-        let formData = new FormData(); // meow
-        formData.append("id", id);
-        formData.append("ver_name", verName);
-        formData.append("changelog", changelog);
-        formData.append("stop_and_restart", stopAndRestart);
-        formData.append("set_to_current_version", setToCurrentVersion);
-        for (const file of directoryInput.files) {
-            try {
-                let path = file.webkitRelativePath;
-                path = path.substring(path.indexOf('/') + 1); // remove everything up to and including the first / character (so that trying to run index.js doesn't fail because it's actually in project/index.js)
-                formData.append("files[]", file, path);
-            } catch {
-                progressFailure("Your browser does not support webkitRelativePath. Please update to one of the browsers listed <a href=\"https://developer.mozilla.org/en-US/docs/Web/API/File/webkitRelativePath#browser_compatibility\">here</a>, or newer.");
-                return -1;
-            }
-        }
-        fetch(globalThis.location.origin + "/actions/version.php", {
-            method: "POST",
-            body: formData,
-
-        }).then(async response => {
-            let responseText = await response.text();
-            console.log(response.ok);
-            if (response.ok && !responseText.includes("error")) {
-                failed = false;
-                progressSuccess(true);
-            } else {
-                failed = true;
-                progressFailure();
-            }
-            return responseText;
-        }).then(data => {
-            if (failed) {
-                progressFailure(data);
-            }
-        }).catch(error => {
-            failed = true;
-            progressFailure(error.toString());
-        });
-        console.log(verName, changelog, stopAndRestart, formData);
-    }
-    if (type == 'revert') {
-        let versionid = id.split("-")[1]; // e.g. revert-75 -> 75
-        let stopAndStartThisOne = false;
-        try {
-            stopAndStartThisOne = document.getElementById("dialogue-checkbox-" + id).checked;
-        } catch {
-            stopAndStartThisOne = false;
-        }
-        console.log(versionid, stopAndStartThisOne);
-        document.getElementById(id + "-dialogue").remove();
-        fetch(globalThis.location.origin + "/actions/revert.php", {
-            method: "POST",
-            body: JSON.stringify({
-                id: versionid,
-                stopandstartthisone: stopAndStartThisOne
-            })
-        }).then(async response => {
-            let responseText = await response.text();
-            console.log(response.ok);
-            if (response.ok && !responseText.includes("error")) {
-                failed = false;
-                progressSuccess(true);
-            } else {
-                failed = true;
-                progressFailure();
-            }
-            return responseText;
-        }).then(data => {
-            if (failed) {
-                progressFailure(data);
-            }
-        }).catch(error => {
-            failed = true;
-            progressFailure(error.toString());
-        });
-    }
-}
 // me when you press the START/STOP/FORCE STOP buttons in startstop.php:
 let statusChangeButtons = document.getElementsByClassName("status-change-button");
 Array.from(statusChangeButtons).forEach((startButton) => startButton.addEventListener('click', function() {
@@ -482,11 +343,12 @@ let revertButtons = document.getElementsByClassName("revert-button");
 Array.from(revertButtons).forEach((button) => {
     button.addEventListener('click', function () {
         let alsoRestartDialogue = new DialogueBox(button.id + '-dialogue', "Revert Options", [
-            {element: "form", id: "dialogue-form-" + button.id, action: "javascript:submitForm('revert', '" + button.id + "')"},
+            {element: "form", id: "dialogue-form-" + button.id},
             {element: "input", type: "checkbox", id: "dialogue-checkbox-" + button.id, name: "dialogue-checkbox-" + button.id, inside: "dialogue-form-" + button.id, checked: ""},
             {element: "label", for: "dialogue-checkbox-" + button.id, innerhtml: "Stop current version and start this one.", inside: "dialogue-form-" + button.id},
             {element: "br", inside: "dialogue-form-" + button.id},
             {element: "button", type: "submit", innerhtml: "REVERT TO", inside: "dialogue-form-" + button.id}]);
         alsoRestartDialogue.show();
+        formsCreateEventListenersForNewElement(alsoRestartDialogue.element); // in forms.js
     });
 });
