@@ -14,7 +14,7 @@ function submitRevertForm(id) {
     progressReset();
     let stopAndStartThisOne = false;
     try {
-        stopAndStartThisOne = document.getElementById("dialogue-checkbox-" + id).checked;
+        stopAndStartThisOne = document.getElementById("dialogue-checkbox-revert-" + id).checked;
     } catch {
         stopAndStartThisOne = false;
     }
