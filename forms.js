@@ -3,7 +3,7 @@ let failed = false;
 function formsCreateEventListenersForNewElement(element) {
     if (element.id.split("-")[0] == 'revert') {
         let formelement = document.getElementById('dialogue-form-revert-' + element.id.split("-")[1]);
-        formelement.addEventListener('click', function(event) {
+        formelement.addEventListener('submit', function(event) {
             event.preventDefault();
             submitRevertForm(element.id.split("-")[1]);
         });
