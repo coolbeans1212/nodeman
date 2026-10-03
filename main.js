@@ -80,7 +80,7 @@ for (let i  = 0, len = windowsArray.length; i < len; i++) {
         windowsArray.unshift(windowsArray.splice(clickedWindow, 1)[0]); // move clicked window to the start of the array
         console.log(`hello i am window ${clickedWindow} in the array and i have caused the array to CHANGE. IT CHANGED.`)
         for (let j = 0, len = windowsArray.length; j < len; j++) {
-            if (windowsArray[j].id != 'progress') { // this window should be always-on-top
+            if (windowsArray[j].id != 'progress' && windowsArray[j].id != 'dialogue') { // this window should be always-on-top
                 windowsArray[j].style.zIndex = 10000 - j;
             }
         }
@@ -247,6 +247,42 @@ function submitForm(type, id) {
         });
         console.log(verName, changelog, stopAndRestart, formData);
     }
+    if (type == 'revert') {
+        let versionid = id.split("-")[1]; // e.g. revert-75 -> 75
+        let stopAndStartThisOne = false;
+        try {
+            stopAndStartThisOne = document.getElementById("dialogue-checkbox-" + id).checked;
+        } catch {
+            stopAndStartThisOne = false;
+        }
+        console.log(versionid, stopAndStartThisOne);
+        document.getElementById(id + "-dialogue").remove();
+        fetch(globalThis.location.origin + "/actions/revert.php", {
+            method: "POST",
+            body: JSON.stringify({
+                id: versionid,
+                stopandstartthisone: stopAndStartThisOne
+            })
+        }).then(async response => {
+            let responseText = await response.text();
+            console.log(response.ok);
+            if (response.ok && !responseText.includes("error")) {
+                failed = false;
+                progressSuccess(true);
+            } else {
+                failed = true;
+                progressFailure();
+            }
+            return responseText;
+        }).then(data => {
+            if (failed) {
+                progressFailure(data);
+            }
+        }).catch(error => {
+            failed = true;
+            progressFailure(error.toString());
+        });
+    }
 }
 // me when you press the START/STOP/FORCE STOP buttons in startstop.php:
 let statusChangeButtons = document.getElementsByClassName("status-change-button");
@@ -408,16 +444,27 @@ class DialogueBox {
         this.element = dialoguebox;
         dialoguebox.id = id;
         dialoguebox.getElementsByClassName("title-bar-text")[0].innerHTML = title;
-        elements.forEach((element) => {
-            console.log(element);
-            let realelement = document.createElement(element["type"]);
-            realelement.innerHTML = element["innerhtml"];
-            dialogueboxinner.appendChild(realelement);
-        })
+        dialoguebox.zIndex = 500000;
 
         document.body.appendChild(dialoguebox);
         makeDraggable(dialoguebox);
         closeWindowHandler(dialoguebox);
+
+        elements.forEach((element) => {
+            let realelement = document.createElement(element["element"]);
+            realelement.innerHTML = element["innerhtml"] ?? "";
+            delete element.innerhtml;
+            delete element.element; // deleting so that they don't get set as attributes by the below forEach loop :)
+            Object.keys(element).forEach((key) => {
+                realelement.setAttribute(key, element[key]);
+            })
+            if (!element["inside"]) {
+                dialogueboxinner.appendChild(realelement);
+            } else {
+                dialoguebox.querySelector("#" + element["inside"]).appendChild(realelement);
+            }
+            
+        });
     }
     show() {
         this.element.classList.remove("hidden");
@@ -425,4 +472,21 @@ class DialogueBox {
     hide() {
         this.element.classList.add("hidden");
     }
+    remove() {
+        this.element.remove();
+    }
 }
+
+// REVERT TO: create dialogue. do you wanna start this version?
+let revertButtons = document.getElementsByClassName("revert-button");
+Array.from(revertButtons).forEach((button) => {
+    button.addEventListener('click', function () {
+        let alsoRestartDialogue = new DialogueBox(button.id + '-dialogue', "Revert Options", [
+            {element: "form", id: "dialogue-form-" + button.id, action: "javascript:submitForm('revert', '" + button.id + "')"},
+            {element: "input", type: "checkbox", id: "dialogue-checkbox-" + button.id, name: "dialogue-checkbox-" + button.id, inside: "dialogue-form-" + button.id, checked: ""},
+            {element: "label", for: "dialogue-checkbox-" + button.id, innerhtml: "Stop current version and start this one.", inside: "dialogue-form-" + button.id},
+            {element: "br", inside: "dialogue-form-" + button.id},
+            {element: "button", type: "submit", innerhtml: "REVERT TO", inside: "dialogue-form-" + button.id}]);
+        alsoRestartDialogue.show();
+    });
+});
