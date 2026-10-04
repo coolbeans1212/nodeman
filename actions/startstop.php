@@ -23,12 +23,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     include_once __DIR__ . '/../statuscheck.php';
     switch ($action) {
         case "stop":
-            $pid = checkStatus($projectName)[1]; //2nd entry of ps aux
-            stopProcess((int)$pid);
+            if (isset(checkStatus($projectName)[1])) {
+                $pid = checkStatus($projectName)[1]; //2nd entry of ps aux
+                stopProcess((int)$pid);
+            } else {
+                http_response_code(409);
+                die("Project already stopped or cannot find PID.");
+            }
             break;
         case "force-stop":
-            $pid = checkStatus($projectName)[1];
-            stopProcess((int)$pid, true);
+            if (isset(checkStatus($projectName)[1])) {
+                $pid = checkStatus($projectName)[1];
+                stopProcess((int)$pid, true);
+            } else {
+                http_response_code(409);
+                die("Project already stopped or cannot find PID.");
+            }
             break;
         case "start":
             $sql = "SELECT * FROM projects WHERE name = ?"; // name should be UNIQUE.
