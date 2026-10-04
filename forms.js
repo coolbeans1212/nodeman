@@ -8,6 +8,50 @@ function formsCreateEventListenersForNewElement(element) {
             submitRevertForm(element.id.split("-")[1]);
         });
     }
+    if (element.id.split("-")[0] == 'delete') {
+        let formelement = document.getElementById('dialogue-form-delete-' + element.id.split("-")[1]);
+        formelement.addEventListener('submit', function(event) {
+            event.preventDefault();
+            submitDeleteForm(element.id.split("-")[1]);
+        })
+    }
+}
+
+function submitDeleteForm(id) {
+    progressReset();
+    let deleteAllFiles = false;
+    try {
+        deleteAllFiles = document.getElementById("dialogue-checkbox-delete-" + id).checked;
+    } catch {
+        deleteAllFiles = false;
+    }
+    console.log(id, deleteAllFiles);
+    document.getElementById("delete-" + id + "-dialogue").remove();
+    fetch(globalThis.location.origin + "/actions/deleteversion.php", {
+        method: "POST",
+        body: JSON.stringify({
+            id: id,
+            deleteallfiles: deleteAllFiles
+        })
+    }).then(async response => {
+        let responseText = await response.text();
+        console.log(response.ok);
+        if (response.ok && !responseText.includes("error")) {
+            failed = false;
+            progressSuccess(true);
+        } else {
+            failed = true;
+            progressFailure();
+        }
+        return responseText;
+    }).then(data => {
+        if (failed) {
+            progressFailure(data);
+        }
+    }).catch(error => {
+        failed = true;
+        progressFailure(error.toString());
+    });
 }
 
 function submitRevertForm(id) {

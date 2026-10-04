@@ -358,3 +358,20 @@ Array.from(revertButtons).forEach((button) => {
         formsCreateEventListenersForNewElement(alsoRestartDialogue.element); // in forms.js
     });
 });
+
+// DELETE: create dialogue. also delete files?
+let deleteButtons = document.getElementsByClassName("delete-button");
+Array.from(deleteButtons).forEach((button) => {
+    button.addEventListener('click', function () {
+        let deleteDialogue = new DialogueBox(button.id + '-dialogue', "Delete Options", [
+            {element: "span", innerhtml: "Are you sure you want to delete this version? This <b>CANNOT BE UNDONE</b>."},
+            {element: "br"}, {element: "br"},
+            {element: "form", id: "dialogue-form-" + button.id},
+            {element: "input", type: "checkbox", id: "dialogue-checkbox-" + button.id, name: "dialogue-checkbox-" + button.id, inside: "dialogue-form-" + button.id, checked: ""},
+            {element: "label", for: "dialogue-checkbox-" + button.id, innerhtml: "Also delete all files.", inside: "dialogue-form-" + button.id},
+            {element: "br", inside: "dialogue-form-" + button.id},
+            {element: "button", type: "submit", innerhtml: "DELETE", inside: "dialogue-form-" + button.id}]);
+        deleteDialogue.show();
+        formsCreateEventListenersForNewElement(deleteDialogue.element);
+    })
+})

@@ -44,7 +44,7 @@ function generateVersionBox($versionAssocArray) {
                 <div class="version-inner-right">
                     <button id="revert-<?php echo $versionAssocArray['id']; ?>" class="revert-button">REVERT TO</button>
                     <a href="/actions/zipversionupload.php?id=<?php echo $versionAssocArray['id'];?>"><button id="download-<?php echo $versionAssocArray['id']; ?>">DOWNLOAD</button></a>
-                    <button id="delete-<?php echo $versionAssocArray['id']; ?>">DELETE</button>
+                    <button id="delete-<?php echo $versionAssocArray['id']; ?>" class="delete-button">DELETE</button>
                 </div>
             </div>
         </div><br><?php
