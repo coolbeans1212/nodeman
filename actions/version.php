@@ -17,7 +17,6 @@ function moreHelpfulMkdirError($error) {
 
 require_once __DIR__ . "/../isAdminAndParseEnv.php";
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    var_dump($_POST);
     // pop the new deets in
     $sql = "INSERT INTO versions (name, changelog, project_id) VALUES (?, ?, ?)";
     $stmt = $mysqli->prepare($sql);
@@ -88,20 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // and NOW we need to start this version
     if ($_POST['stop_and_restart'] == 'true') {
         require_once __DIR__ . "/../startstopfunctions.php";
-        require_once __DIR__ . '/../statuscheck.php';
-        $sql = "SELECT * FROM projects WHERE id = ?";
-        $stmt = $mysqli->prepare($sql);
-        $stmt->bind_param('i', $_POST['id']);
-        if (!$stmt->execute()) {
-            sqlError($mysqli->error);
-        }
-        $result = $stmt->get_result();
-        $projectDeets = $result->fetch_assoc();
-        if (isset(checkStatus($projectDeets['name'])[1])) {
-            $pid = checkStatus($projectDeets['name'])[1];
-            stopProcess((int)$pid);
-        }
-        startProject($projectDeets['name'], $projectDeets['location'] . $projectDeets['current_version'] . DIRECTORY_SEPARATOR, $projectDeets['main_file'], $env);
+        stopAndRestartProjectWithId($_POST['id'], $mysqli, $env);
     }
 
     
