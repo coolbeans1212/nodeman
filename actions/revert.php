@@ -8,7 +8,6 @@ function sqlError($error) {
 require_once __DIR__ . "/../isAdminAndParseEnv.php";
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $payload = json_decode(file_get_contents("php://input"), true);
-    var_dump($payload);
     $sql = "UPDATE versions SET last_used = NOW() WHERE id = ?";
     $stmt = $mysqli->prepare($sql);
     $stmt->bind_param('i', $payload['id']);
@@ -25,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($payload['stopandstartthisone']) {
         $sql = "SELECT project_id FROM versions WHERE id = ?";
-            $stmt = $mysqli->prepare($sql);
+        $stmt = $mysqli->prepare($sql);
         $stmt->bind_param('i', $payload['id']);
         if (!$stmt->execute()) {
             sqlError($mysqli->error);
