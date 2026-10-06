@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $fulllocation = $location . DIRECTORY_SEPARATOR . $locationid;
     
     // now we have location. we must SAVE to the location.
-    if (!mkdir($fulllocation)) {
+    if (!mkdir($fulllocation, 0777, true)) {
         $error = moreHelpfulMkdirError(error_get_last()["message"]);
         http_response_code(500);
         die($error);
