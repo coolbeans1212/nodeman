@@ -74,6 +74,15 @@ function runningFor($timeWithColon) { //converts 33:08 into 33 hours, 8 minutes 
 }
 
 function checkStatus($projectName) {
+    $mysqli = require __DIR__ . '/db.php';
+    $sql = "SELECT location FROM projects WHERE name = ?";
+    $stmt = $mysqli->prepare($sql);
+    $stmt->bind_param('s', $projectName);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $projectLocation = $result->fetch_assoc();
+    $projectLocation =  $projectLocation['location'];
+
     $output = []; // i love arrays!!!!!!
     exec('/bin/ps aux', $output);
     $process = array_filter($output, function($line) use ($projectName) { //omg its just like JavaScript® this is so meta
