@@ -85,8 +85,8 @@ function checkStatus($projectName) {
 
     $output = []; // i love arrays!!!!!!
     exec('/bin/ps aux', $output);
-    $process = array_filter($output, function($line) use ($projectName) { //omg its just like JavaScript® this is so meta
-        return stripos($line, $projectName) !== false;
+    $process = array_filter($output, function($line) use ($projectLocation) { //omg its just like JavaScript® this is so meta
+        return stripos($line, $projectLocation) !== false;
     });
     $process = array_values($process);
     $process = end($process);
