@@ -135,3 +135,36 @@ body {
     font-size: 10px;
     vertical-align: top;
 }
+
+.bad {
+    background: linear-gradient(90deg,#eb1039a0,#fff0);
+    padding: 10px;
+    padding-left: 96px;
+    min-height: 74px;
+}
+.bad::before {
+    content: "";
+    background: url("/files/images/error.png");
+    background-repeat: no-repeat;
+    position: absolute;
+    left: 32px;
+    top: 32px;
+    width: 64px;
+    height: 64px;
+    background-size: contain;
+}
+
+.table-container {
+    overflow-x: scroll;
+    padding-bottom: 10px;
+}
+
+table {
+    width: 100%;
+    table-layout: auto;
+}
+
+th, td {
+    max-width: 500px;
+    width: 50px;
+}

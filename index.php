@@ -3,6 +3,7 @@ require_once __DIR__ . "/isAdminAndParseEnv.php";
 require_once __DIR__ . "/forms.php";
 require_once __DIR__ . "/statuscheck.php";
 require_once __DIR__ . "/versions.php";
+//require_once __DIR__ . "/npmdetails.php";
 
 $sql = 'SELECT * FROM projects';
 $result = $mysqli->query($sql);
@@ -14,7 +15,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 function createTabs($projects) {
     $i = 0;
     foreach ($projects as $row) {
-        ?><button role="tab" aria-controls="<?php echo str_replace(' ', '-', strtolower($row['name']));?>"<?php if ($i == 0){ ?>aria-selected="true"<?php } ?>><?php echo $row['name'];?></button><?php
+        ?><button role="tab" data-id="<?php echo $row['name'];?>" aria-controls="<?php echo str_replace(' ', '-', strtolower($row['name']));?>"<?php if ($i == 0){ ?>aria-selected="true"<?php } ?>><?php echo $row['name'];?></button><?php
         $i++;
     }
 }
@@ -131,8 +132,22 @@ function createTabs($projects) {
                 </div>
             </div>
             <div class="window-body has-space">
-                <p>The background behind is blurred.</p>
+                <section class="tabs">
+                    <menu role="tablist" aria-label="NPM tabs" id="npm-tabs">
+                        <?php createTabs($projects); ?>
+                    </menu>
+                    <?php
+                    $i = 0;
+                    foreach ($projects as $row) {
+                        ?><article role="tabpanel" data-id="<?php echo $row['name'];?>" class="npm-tabpanel-contents" id="<?php echo str_replace(' ', '-', strtolower($row['name']));?>" <?php if($i != 0) { echo 'hidden'; } ?>>
+                            Loading...
+                        </article><?php
+                        $i++;
+                    }
+                    ?>
+                </section>
             </div>
+        </div>
         </div>
         <div class="window glass active hidden" id="progress" style="top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 99999;">
             <div class="title-bar">
@@ -152,11 +167,11 @@ function createTabs($projects) {
                 </div>
             </div>
             <div class="window-body has-space">
-                <!-- nothing here... -->
             </div>
     </div>
         <script src="/main.js"></script>
         <script src="/forms.js"></script>
+        <script src="/live.js"></script>
     </body>
     <div class="hidden" id="javascript-sucks"></div>
 </html>

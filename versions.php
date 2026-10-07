@@ -74,3 +74,14 @@ function makeVersionPages($projectId, $boxesPerPage = 1) {
     }
     ?></div><?php
 }
+
+function getCurrentVersionOfProject($projectId) {
+    global $mysqli;
+    $sql = "SELECT current_version FROM projects WHERE id = ?";
+    $stmt = $mysqli->prepare($sql);
+    $stmt->bind_param('i', $projectId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $version = $result->fetch_assoc();
+    return $version['current_version'];
+}
