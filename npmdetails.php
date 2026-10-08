@@ -91,6 +91,24 @@ function displayDetails($projectId) {
         echo '<div class="bad">' . nl2br($projectDetails['error']['summary']) . '</div><br>';
     }
     makeDetailsTable($projectDetails);
+    $isAnyDependencyMissing = false;
+    $isAnyDependencyExtraneous = false;
+    foreach ($projectDetails['dependencies'] as $dependency) {
+        if (isset($dependency['missing']) && $dependency['missing']) {
+            $isAnyDependencyMissing = true;
+        }
+        if (isset($dependency['extraneous']) && $dependency['extraneous']) {
+            $isAnyDependencyExtraneous = true;
+        }
+    }
+    ?>
+    <?php if ($isAnyDependencyMissing) { ?>
+        <button class="npm-install-missing-button" data-id="<?php echo $projectId;?>">Install Missing</button>
+    <?php } ?>
+    <?php if ($isAnyDependencyExtraneous) { ?>
+        <button class="npm-prune-extraneous-button" data-id="<?php echo $projectId;?>">Prune Extraneous Dependencies</button>
+    <?php } ?>
+    <?php
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {

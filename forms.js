@@ -17,6 +17,21 @@ function formsCreateEventListenersForNewElement(element) {
     }
 }
 
+function createEventListenersForNpmCommandsOnLoad() {
+    let npmInstallMissingButtons = document.getElementsByClassName("npm-install-missing-button");
+    let npmPruneExtraneousButtons = document.getElementsByClassName("npm-prune-extraneous-button");
+    Array.from(npmInstallMissingButtons).forEach(function (installMissingButton) {
+        installMissingButton.addEventListener('click', function () {
+            console.log(installMissingButton.dataset.id);
+        });
+    });
+    Array.from(npmPruneExtraneousButtons).forEach(function (pruneExtraneousButton) {
+        pruneExtraneousButton.addEventListener('click', function () {
+            console.log(pruneExtraneousButton.dataset.id);
+        });
+    });
+}
+
 function submitDeleteForm(id) {
     progressReset();
     let deleteAllFiles = false;

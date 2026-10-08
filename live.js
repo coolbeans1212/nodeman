@@ -8,6 +8,7 @@ function fetchAndDisplayNpmDetails(projectName, putInElement) {
         return responseText;
     }).then(data => {
         putInElement.innerHTML = data;
+        createEventListenersForNpmCommandsOnLoad(); // in forms.js
     }).catch(error => {
         console.log(error.toString());
     });
@@ -23,7 +24,6 @@ let isVisibleObserver = new MutationObserver(function() {
             fetchAndDisplayNpmDetails(npmTab.dataset.id, npmTab.parentElement.querySelector('#' + npmTab.id));
         });
         npmDetailsLoaded = true;
-        
     }
 });
 isVisibleObserver.observe(npmWindow, {attributes: true, attributeFilter: ["class"]});
