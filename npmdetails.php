@@ -36,7 +36,6 @@ function getDetails($projectId) {
 
 function displayDetails($projectId) {
     $projectDetails = getDetails($projectId);
-    var_dump($projectDetails);
     if (!$projectDetails) {
         echo 'There is no NPM environment for this project.';
         return 0;
