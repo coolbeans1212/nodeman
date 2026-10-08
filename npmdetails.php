@@ -34,18 +34,21 @@ function getDetails($projectId) {
     return $npmDetails;
 }
 
-function displayDetails($projectId) {
-    $projectDetails = getDetails($projectId);
-    if (!$projectDetails) {
-        echo 'There is no NPM environment for this project.';
+function echoIfIsset($checkIsset, $echoMe, $alsoCheckNotFalse = false) { // To prevent a warning from being emitted, $checkIsset should be of the form `$variable ?? null`
+    if (isset($checkIsset) && !$alsoCheckNotFalse) {
+        echo $echoMe;
         return 0;
     }
-    if (isset($projectDetails['error'])) {
-        echo '<div class="bad">' . nl2br($projectDetails['error']['summary']) . '</div><br>';
+    if (isset($checkIsset) && $alsoCheckNotFalse && $checkIsset) {
+        echo $echoMe;
+        return 0;
     }
+}
+
+function makeDetailsTable($projectDetails) {
     ?>
     <div class="table-container">
-    <table>
+        <table>
         <thead>
             <tr>
                 <th>Name</th>
@@ -62,26 +65,32 @@ function displayDetails($projectId) {
         
         <td>
         <?php
-        if (isset($dependency['required'])) { echo $dependency['required'] . ' required';}
-        if (isset($dependency['version'])) { echo $dependency['version'];} ?>
+        echoIfIsset($dependency['required'] ?? null, $dependency['required'] ?? null . ' required');
+        echoIfIsset($dependency['version'] ?? null, $dependency['version'] ?? null); ?>
         </td>
         <td>
         <?php
-        if (isset($dependency['resolved'])) { echo $dependency['resolved'];} ?>
+        echoIfIsset($dependency['resolved'] ?? null, $dependency['resolved'] ?? null) ; ?>
         </td>
 
         <td><?php
-        if (isset($dependency['overridden']) && $dependency['overridden']) {
-            echo 'Overridden. ';
-        }
-        if (isset($dependency['extraneous']) && $dependency['extraneous']) {
-            echo 'Extraneous. ';
-        }
-        if (isset($dependency['missing']) && $dependency['missing']) {
-            echo 'Missing. ';
-        }
+        echoIfIsset($dependency['overriden'] ?? null, 'Overriden. ', true);
+        echoIfIsset($dependency['missing'] ?? null, 'Missing. ', true);
+        echoIfIsset($dependency['extraneous'] ?? null, 'Extraneous. ', true);
     }
     ?></tbody></table></div><?php
+}
+
+function displayDetails($projectId) {
+    $projectDetails = getDetails($projectId);
+    if (!$projectDetails) {
+        echo 'There is no NPM environment for this project.';
+        return 0;
+    }
+    if (isset($projectDetails['error'])) {
+        echo '<div class="bad">' . nl2br($projectDetails['error']['summary']) . '</div><br>';
+    }
+    makeDetailsTable($projectDetails);
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
