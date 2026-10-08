@@ -36,12 +36,13 @@ function getDetails($projectId) {
 
 function displayDetails($projectId) {
     $projectDetails = getDetails($projectId);
+    var_dump($projectDetails);
     if (!$projectDetails) {
         echo 'There is no NPM environment for this project.';
         return 0;
     }
     if (isset($projectDetails['error'])) {
-        echo '<div class="bad">' . nl2br($projectDetails['error']['summary']) . '</div>';
+        echo '<div class="bad">' . nl2br($projectDetails['error']['summary']) . '</div><br>';
     }
     ?>
     <div class="table-container">
@@ -58,12 +59,19 @@ function displayDetails($projectId) {
         <tbody>
     <?php
     foreach ($projectDetails['dependencies'] as $dependencyName => $dependency) {
-        ?><tr><td><?php echo $dependencyName;?></td><?php
-        $dependencyArrayKeys = array_keys($dependency);
-        for ($i = 0; $i < 2; $i += 1) {
-            ?><td><?php echo $dependency[$dependencyArrayKeys[$i]];?></td><?php
-        }
-        ?><td><?php
+        ?><tr><td><?php echo $dependencyName;?></td>
+        
+        <td>
+        <?php
+        if (isset($dependency['required'])) { echo $dependency['required'] . ' required';}
+        if (isset($dependency['version'])) { echo $dependency['version'];} ?>
+        </td>
+        <td>
+        <?php
+        if (isset($dependency['resolved'])) { echo $dependency['resolved'];} ?>
+        </td>
+
+        <td><?php
         if (isset($dependency['overridden']) && $dependency['overridden']) {
             echo 'Overridden. ';
         }
