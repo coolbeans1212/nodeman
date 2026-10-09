@@ -13,7 +13,7 @@ function getProjectIdFromName($projectName) {
     return $projectId;
 }
 
-function getDetails($projectId) {
+function getLocationOfCurrentVersion($projectId) {
     global $mysqli;
     $sql = "SELECT location FROM projects WHERE id = ?";
     $stmt = $mysqli->prepare($sql);
@@ -22,9 +22,13 @@ function getDetails($projectId) {
     $result = $stmt->get_result();
     $location = $result->fetch_assoc();
     $location = $location['location'];
+    $location = $location . DIRECTORY_SEPARATOR . getCurrentVersionOfProject($projectId) . DIRECTORY_SEPARATOR;
+    return $location;
+}
 
-    $locationOfVersion = $location . DIRECTORY_SEPARATOR . getCurrentVersionOfProject($projectId) . DIRECTORY_SEPARATOR;
-    $cmd = sprintf("cd %s && npm list --json", $locationOfVersion);
+function getDetails($projectId) {
+    $locationOfVersion = getLocationOfCurrentVersion($projectId);
+    $cmd = sprintf("cd %s && npm list --json", escapeshellarg($locationOfVersion));
     exec($cmd, $cmdout);
     $npmDetails = "";
     foreach($cmdout as $line) {

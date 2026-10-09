@@ -206,6 +206,16 @@ function progressFailure(error = "Awaiting data.") {
     }
     progressMessage.innerHTML = 'Failed. ' + error;
 }
+function progressProcessing(refreshRequired) {
+    progressOk.classList.remove("hidden");
+    progressbar.classList.remove("marquee");
+    progressbar.classList.add("paused");
+    if (refreshRequired) {
+        progressMessage.innerHTML = 'Your request is processing. You may close this window. Refresh the page to check the status.';
+    } else {
+        progressMessage.innerHTML = 'Your request is processing. You may close this window.';
+    }
+}
 function progressCancel() {
     progressOk.classList.remove("hidden");
     progressbar.classList.remove("marquee");

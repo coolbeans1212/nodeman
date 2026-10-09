@@ -22,13 +22,42 @@ function createEventListenersForNpmCommandsOnLoad() {
     let npmPruneExtraneousButtons = document.getElementsByClassName("npm-prune-extraneous-button");
     Array.from(npmInstallMissingButtons).forEach(function (installMissingButton) {
         installMissingButton.addEventListener('click', function () {
-            console.log(installMissingButton.dataset.id);
+            submitNpmForm('installMissing', installMissingButton.dataset.id);
         });
     });
     Array.from(npmPruneExtraneousButtons).forEach(function (pruneExtraneousButton) {
         pruneExtraneousButton.addEventListener('click', function () {
-            console.log(pruneExtraneousButton.dataset.id);
+            submitNpmForm('prune', pruneExtraneousButton.dataset.id);
         });
+    });
+}
+
+function submitNpmForm(type, id) {
+    progressReset();
+    fetch(globalThis.location.origin + "/actions/npm.php", {
+        method: "POST",
+        body: JSON.stringify({
+            id: id,
+            type: type
+        })
+    }).then(async response => {
+        let responseText = await response.text();
+        console.log(response.ok);
+        if (response.ok && !responseText.includes("error")) {
+            failed = false;
+            progressProcessing(true);
+        } else {
+            failed = true;
+            progressFailure();
+        }
+        return responseText;
+    }).then(data => {
+        if (failed) {
+            progressFailure(data);
+        }
+    }).catch(error => {
+        failed = true;
+        progressFailure(error.toString());
     });
 }
 
