@@ -1,6 +1,7 @@
 // npmdetails.php takes a lot of time to process, so we don't wanna include that index.php, so instead we load it when the user clicks on that shortcut.
-
+let npmHasLoaded = false;
 function fetchAndDisplayNpmDetails(projectName, putInElement) {
+    npmHasLoaded = true;
     fetch(globalThis.location.origin + "/npmdetails.php?" + new URLSearchParams({projectName: projectName}), {
         method: "GET",
     }).then(async response => {
@@ -8,11 +9,31 @@ function fetchAndDisplayNpmDetails(projectName, putInElement) {
         return responseText;
     }).then(data => {
         putInElement.innerHTML = data;
-        createEventListenersForNpmCommandsOnLoad(); // in forms.js
+        if (npmHasLoaded) {
+            createEventListenersForNpmCommandsOnLoad(); // in forms.js
+        }
     }).catch(error => {
         console.log(error.toString());
     });
 
+}
+
+function RepeatFetchNpmDetailsUntilNoMissing(projectName, putInElement) {
+    let fetchLoop = setInterval(function () {
+        fetchAndDisplayNpmDetails(projectName, putInElement);
+        if (document.getElementsByClassName('npm-install-missing-button').length == 0) {
+            clearInterval(fetchLoop);
+        }
+    }, 5000);
+}
+function RepeatFetchNpmDetailsUntilNoExtraneous(projectName, putInElement) {
+    let fetchLoop = setInterval(function () {
+        if (document.getElementsByClassName('npm-prune-extraneous-button').length == 0) {
+            clearInterval(fetchLoop);
+            return 0;
+        }
+        fetchAndDisplayNpmDetails(projectName, putInElement);
+    }, 5000);
 }
 
 let npmWindow = document.getElementById("npm");

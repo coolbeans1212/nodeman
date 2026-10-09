@@ -22,17 +22,17 @@ function createEventListenersForNpmCommandsOnLoad() {
     let npmPruneExtraneousButtons = document.getElementsByClassName("npm-prune-extraneous-button");
     Array.from(npmInstallMissingButtons).forEach(function (installMissingButton) {
         installMissingButton.addEventListener('click', function () {
-            submitNpmForm('installMissing', installMissingButton.dataset.id);
+            submitNpmForm('installMissing', installMissingButton.dataset.id, installMissingButton);
         });
     });
     Array.from(npmPruneExtraneousButtons).forEach(function (pruneExtraneousButton) {
         pruneExtraneousButton.addEventListener('click', function () {
-            submitNpmForm('prune', pruneExtraneousButton.dataset.id);
+            submitNpmForm('prune', pruneExtraneousButton.dataset.id, pruneExtraneousButton);
         });
     });
 }
 
-function submitNpmForm(type, id) {
+function submitNpmForm(type, id, buttonFrom) {
     progressReset();
     fetch(globalThis.location.origin + "/actions/npm.php", {
         method: "POST",
@@ -45,7 +45,14 @@ function submitNpmForm(type, id) {
         console.log(response.ok);
         if (response.ok && !responseText.includes("error")) {
             failed = false;
-            progressProcessing(true);
+            let article = buttonFrom.parentElement;
+            progressProcessing();
+            if (type == 'installMissing') {
+                RepeatFetchNpmDetailsUntilNoMissing(article.dataset.id, article);
+            }
+            if (type == 'prune') {
+                RepeatFetchNpmDetailsUntilNoExtraneous(article.dataset.id, article);
+            }
         } else {
             failed = true;
             progressFailure();

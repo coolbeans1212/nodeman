@@ -6,13 +6,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     var_dump($payload);
     $location = getLocationOfCurrentVersion($payload['id']);
     if ($payload['type'] == 'prune') {
-        $cmd = sprintf("setsid -w cd %s && npm prune", escapeshellarg($location));
-        exec($cmd, $cmdout);
-        var_dump($cmdout);
+        $cmd = sprintf(
+            'cd %s && nohup npm prune > /dev/null 2>&1 < /dev/null &',
+            escapeshellarg($location)
+        );
+        exec($cmd);
     }
+
     if ($payload['type'] == 'installMissing') {
-        $cmd = sprintf("setsid -w cd %s && npm i", escapeshellarg($location));
-        exec($cmd, $cmdout);
-        var_dump($cmdout);
+        $cmd = sprintf(
+            'cd %s && nohup npm install > /dev/null 2>&1 < /dev/null &',
+            escapeshellarg($location)
+        );
+        exec($cmd);
     }
 }
