@@ -83,7 +83,11 @@ function makeDetailsTable($projectDetails, $projectId) {
         echoIfIsset($dependency['extraneous'] ?? null, 'Extraneous. ', true); ?>
         </td>
         
-        <td><button class="thin-button npm-remove-button" data-id="<?php echo $projectId; ?>" data-dependency-name="<?php echo $dependencyName; ?>">Remove</button></td>
+        <td>
+            <?php if (!isset($dependency['missing'])) { ?>
+            <button class="thin-button npm-remove-button" data-id="<?php echo $projectId; ?>" data-dependency-name="<?php echo $dependencyName; ?>">Remove</button>
+            <?php } ?>
+        </td>
         <?php
     }
     ?>
@@ -118,6 +122,7 @@ function displayDetails($projectId) {
     <?php if ($isAnyDependencyExtraneous) { ?>
         <button class="npm-prune-extraneous-button" data-id="<?php echo $projectId;?>">Prune Extraneous Dependencies</button>
     <?php } ?>
+    <button class="npm-install-new-dependency" data-id="<?php echo $projectId;?>">Install New Dependency</button>
     <?php
 }
 

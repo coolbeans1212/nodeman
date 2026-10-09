@@ -29,4 +29,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         );
         exec($cmd);
     }
+
+    if ($payload['type'] == 'installDependency') {
+        $cmd = sprintf(
+            'cd %s && nohup npm i %s > /dev/null 2>&1 < /dev/null &',
+            escapeshellarg($location),
+            escapeshellarg($payload['dependency'])
+        );
+        var_dump($cmd);
+        exec($cmd);
+    }
 }

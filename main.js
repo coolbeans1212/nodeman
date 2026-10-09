@@ -384,5 +384,5 @@ Array.from(deleteButtons).forEach((button) => {
             {element: "button", type: "submit", innerhtml: "DELETE", inside: "dialogue-form-" + button.id}]);
         deleteDialogue.show();
         formsCreateEventListenersForNewElement(deleteDialogue.element);
-    })
-})
+    });
+});

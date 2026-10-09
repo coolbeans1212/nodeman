@@ -173,3 +173,7 @@ th, td {
     height: 20px;
     min-height: unset;
 }
+
+.full-width {
+    width: 100%;
+}

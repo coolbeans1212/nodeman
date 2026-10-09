@@ -13,7 +13,15 @@ function formsCreateEventListenersForNewElement(element) {
         formelement.addEventListener('submit', function(event) {
             event.preventDefault();
             submitDeleteForm(element.id.split("-")[1]);
-        })
+        });
+    }
+    if (element.id.split("-")[1] == 'dependency') {
+        let formelement = document.getElementById('dialogue-form-installdependency-' + element.id.split("-")[0]);
+        formelement.addEventListener('submit', function(event) {
+            event.preventDefault();
+            submitNpmForm('installDependency', element.id.split("-")[0], element, element.parentElement.querySelector("#dialogue-input-" + element.id.split("-")[0]).value);
+            element.remove();
+        });
     }
 }
 
@@ -21,6 +29,7 @@ function createEventListenersForNpmCommandsOnLoad() {
     let npmInstallMissingButtons = document.getElementsByClassName("npm-install-missing-button");
     let npmPruneExtraneousButtons = document.getElementsByClassName("npm-prune-extraneous-button");
     let removeDependencyButtons = document.getElementsByClassName("npm-remove-button");
+    let installNewDependencyButtons = document.getElementsByClassName("npm-install-new-dependency");
     Array.from(npmInstallMissingButtons).forEach(function (installMissingButton) {
         if (installMissingButton.dataset.listenerAdded) return;
         installMissingButton.dataset.listenerAdded = "true";
@@ -42,6 +51,21 @@ function createEventListenersForNpmCommandsOnLoad() {
             submitNpmForm('removeDependency', removeDependencyButton.dataset.id, removeDependencyButton, removeDependencyButton.dataset.dependencyName);
         })
     });
+    Array.from(installNewDependencyButtons).forEach((button) => {
+        if (button.dataset.listenerAdded) return;
+        button.dataset.listenerAdded = "true";
+        button.addEventListener('click', function () {
+            let newDependencyDialogue = new DialogueBox(button.dataset.id + '-dependency-dialogue', "Install New Dependency", [
+                {element: "span", innerhtml: "Enter the name of the new NPM dependency you wish to install."},
+                {element: "br"},
+                {element: "form", id: "dialogue-form-installdependency-" + button.dataset.id},
+                {element: "input", class:"full-width", type: "text", id: "dialogue-input-" + button.dataset.id, name: "dialogue-input-" + button.dataset.id, inside: "dialogue-form-installdependency-" + button.dataset.id},
+                {element: "br", inside: "dialogue-form-installdependency-" + button.dataset.id},
+                {element: "button", type: "submit", innerhtml: "INSTALL", inside: "dialogue-form-installdependency-" + button.dataset.id}]);
+            newDependencyDialogue.show();
+            formsCreateEventListenersForNewElement(newDependencyDialogue.element);
+        });
+    });
 }
 
 function submitNpmForm(type, id, buttonFrom, dependency = null) {
@@ -59,7 +83,11 @@ function submitNpmForm(type, id, buttonFrom, dependency = null) {
         if (response.ok && !responseText.includes("error")) {
             failed = false;
             let article = buttonFrom.parentElement;
-            progressProcessing();
+            if (type != 'removeDependency') {
+                progressProcessing();
+            } else {
+                progressProcessing(true);
+            }
             if (type == 'installMissing') {
                 RepeatFetchNpmDetailsUntilNoMissing(article.dataset.id, article);
             }
