@@ -49,7 +49,7 @@ function echoIfIsset($checkIsset, $echoMe, $alsoCheckNotFalse = false) { // To p
     }
 }
 
-function makeDetailsTable($projectDetails) {
+function makeDetailsTable($projectDetails, $projectId) {
     ?>
     <div class="table-container">
         <table>
@@ -65,7 +65,7 @@ function makeDetailsTable($projectDetails) {
         <tbody>
     <?php
     foreach ($projectDetails['dependencies'] as $dependencyName => $dependency) {
-        ?><tr><td><?php echo $dependencyName;?></td>
+        ?><tr><td data-id="<?php echo $dependencyName;?>"><?php echo $dependencyName;?></td>
         
         <td>
         <?php
@@ -80,9 +80,15 @@ function makeDetailsTable($projectDetails) {
         <td><?php
         echoIfIsset($dependency['overriden'] ?? null, 'Overriden. ', true);
         echoIfIsset($dependency['missing'] ?? null, 'Missing. ', true);
-        echoIfIsset($dependency['extraneous'] ?? null, 'Extraneous. ', true);
+        echoIfIsset($dependency['extraneous'] ?? null, 'Extraneous. ', true); ?>
+        </td>
+        
+        <td><button class="thin-button npm-remove-button" data-id="<?php echo $projectId; ?>" data-dependency-name="<?php echo $dependencyName; ?>">Remove</button></td>
+        <?php
     }
-    ?></tbody></table></div><?php
+    ?>
+
+</tbody></table></div><?php
 }
 
 function displayDetails($projectId) {
@@ -94,7 +100,7 @@ function displayDetails($projectId) {
     if (isset($projectDetails['error'])) {
         echo '<div class="bad">' . nl2br($projectDetails['error']['summary']) . '</div><br>';
     }
-    makeDetailsTable($projectDetails);
+    makeDetailsTable($projectDetails, $projectId);
     $isAnyDependencyMissing = false;
     $isAnyDependencyExtraneous = false;
     foreach ($projectDetails['dependencies'] as $dependency) {

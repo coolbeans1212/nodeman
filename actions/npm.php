@@ -20,4 +20,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         );
         exec($cmd);
     }
+
+    if ($payload['type'] == 'removeDependency') {
+        $cmd = sprintf(
+            'cd %s && nohup npm uninstall %s > /dev/null 2>&1 < /dev/null &',
+            escapeshellarg($location),
+            escapeshellarg($payload['dependency'])
+        );
+        exec($cmd);
+    }
 }

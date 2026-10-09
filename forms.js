@@ -20,25 +20,38 @@ function formsCreateEventListenersForNewElement(element) {
 function createEventListenersForNpmCommandsOnLoad() {
     let npmInstallMissingButtons = document.getElementsByClassName("npm-install-missing-button");
     let npmPruneExtraneousButtons = document.getElementsByClassName("npm-prune-extraneous-button");
+    let removeDependencyButtons = document.getElementsByClassName("npm-remove-button");
     Array.from(npmInstallMissingButtons).forEach(function (installMissingButton) {
+        if (installMissingButton.dataset.listenerAdded) return;
+        installMissingButton.dataset.listenerAdded = "true";
         installMissingButton.addEventListener('click', function () {
             submitNpmForm('installMissing', installMissingButton.dataset.id, installMissingButton);
         });
     });
     Array.from(npmPruneExtraneousButtons).forEach(function (pruneExtraneousButton) {
+        if (pruneExtraneousButton.dataset.listenerAdded) return;
+        pruneExtraneousButton.dataset.listenerAdded = "true";
         pruneExtraneousButton.addEventListener('click', function () {
             submitNpmForm('prune', pruneExtraneousButton.dataset.id, pruneExtraneousButton);
         });
     });
+    Array.from(removeDependencyButtons).forEach(function (removeDependencyButton) {
+        if (removeDependencyButton.dataset.listenerAdded) return;
+        removeDependencyButton.dataset.listenerAdded = "true";
+        removeDependencyButton.addEventListener('click', function () {
+            submitNpmForm('removeDependency', removeDependencyButton.dataset.id, removeDependencyButton, removeDependencyButton.dataset.dependencyName);
+        })
+    });
 }
 
-function submitNpmForm(type, id, buttonFrom) {
+function submitNpmForm(type, id, buttonFrom, dependency = null) {
     progressReset();
     fetch(globalThis.location.origin + "/actions/npm.php", {
         method: "POST",
         body: JSON.stringify({
             id: id,
-            type: type
+            type: type,
+            dependency: dependency
         })
     }).then(async response => {
         let responseText = await response.text();
@@ -52,6 +65,10 @@ function submitNpmForm(type, id, buttonFrom) {
             }
             if (type == 'prune') {
                 RepeatFetchNpmDetailsUntilNoExtraneous(article.dataset.id, article);
+            }
+            if (type == 'removeDependency') {
+                article = buttonFrom.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement;
+                RepeatFetchNpmDetailsUntilDoesNotContainDependency(article.dataset.id, article, dependency);
             }
         } else {
             failed = true;

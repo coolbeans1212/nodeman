@@ -35,6 +35,15 @@ function RepeatFetchNpmDetailsUntilNoExtraneous(projectName, putInElement) {
         fetchAndDisplayNpmDetails(projectName, putInElement);
     }, 5000);
 }
+function RepeatFetchNpmDetailsUntilDoesNotContainDependency(projectName, putInElement, dependency) {
+    let fetchLoop = setInterval(function () {
+        if (document.querySelector('[data-id="' + dependency + '"]') == null) {
+            clearInterval(fetchLoop);
+            return 0;
+        }
+        fetchAndDisplayNpmDetails(projectName, putInElement);
+    }, 5000);
+}
 
 let npmWindow = document.getElementById("npm");
 let npmTabs = document.getElementsByClassName("npm-tabpanel-contents");
