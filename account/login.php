@@ -58,7 +58,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             </form>
         </div>
     </div>
-    <div class="window glass active hidden topmost" style="top: 50%; left: 50%;" id="login-help-window">
+    <div class="window glass active hidden topmost" style="top: 50%; left: 50%; z-index: 99999;" id="login-help-window">
         <div class="title-bar">
             <div class="title-bar-text">Account help</div>
             <div class="title-bar-controls">
@@ -66,7 +66,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             </div>
         </div>
         <div class="window-body has-space">
-            Administrators: to make a new account, please follow the instructions in INSTALL.md, under the subheading "Set up the database".
+            Administrators: to make a new account, please follow the instructions in INSTALL.md, under the subheading "Set up the database".<br>
+            Not logging in? Make sure that the correct table definitions are set in the correct databases, and that there is at least one account in the users table.</br>
         </div>
     </div>
     <script src="login.js"></script>
