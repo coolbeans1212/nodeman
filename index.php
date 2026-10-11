@@ -3,7 +3,7 @@ require_once __DIR__ . "/isAdminAndParseEnv.php";
 require_once __DIR__ . "/forms.php";
 require_once __DIR__ . "/statuscheck.php";
 require_once __DIR__ . "/versions.php";
-//require_once __DIR__ . "/npmdetails.php";
+require_once __DIR__ . "/userinfo.php";
 
 $sql = 'SELECT * FROM projects';
 $result = $mysqli->query($sql);
@@ -31,22 +31,29 @@ function createTabs($projects) {
     </head>
     <body>
         <div class="desktop-icons">
-            <div class="shortcut" id="projects-shortcut">
-                <img src="/files/images/node.svg" alt="NodeJS" class="icon">
-                <span>Add or view projects</span>
+            <div class="shortcut-group-left">
+                <div class="shortcut" id="projects-shortcut">
+                    <img src="/files/images/node.svg" alt="NodeJS" class="icon">
+                    <span>Add or view projects</span>
+                </div>
+                <div class="shortcut" id="status-shortcut">
+                    <img src="/files/images/node.svg" alt="NodeJS" class="icon">
+                    <span>Check or change status</span>
+                </div>
+                <div class="shortcut" id="versions-shortcut">
+                    <img src="/files/images/node.svg" alt="NodeJS" class="icon">
+                    <span>Rollback or upload version</span>
+                </div>
+                <div class="shortcut" id="npm-shortcut">
+                    <img src="/files/images/node.svg" alt="NodeJS" class="icon">
+                    <span>Configure NPM</span>
+                </div>
             </div>
-            <div class="shortcut" id="status-shortcut">
-                <img src="/files/images/node.svg" alt="NodeJS" class="icon">
-                <span>Check or change status</span>
-            </div>
-            <div class="shortcut" id="versions-shortcut">
-                <img src="/files/images/node.svg" alt="NodeJS" class="icon">
-                <span>Rollback or upload version</span>
-            </div>
-            <div class="shortcut" id="npm-shortcut">
-                <img src="/files/images/node.svg" alt="NodeJS" class="icon">
-                <span>Configure NPM</span>
-            </div>
+            <div class="shortcut-group-right">
+                <div class="shortcut" id="account-shortcut">
+                    <img src="/files/images/user.png" alt="Account" class="icon">
+                    <span>Your account</span>
+                </div>
         </div>
         <div class="window glass active hidden" id="projects" style="top: 10px; left: 10px;">
             <div class="title-bar">
@@ -146,6 +153,18 @@ function createTabs($projects) {
                     }
                     ?>
                 </section>
+            </div>
+        </div>
+        <div class="window glass active hidden" id="account" style="top: 10px; left: 10px;">
+            <div class="title-bar">
+                <div class="title-bar-text">Your account</div>
+                <div class="title-bar-controls">
+                    <button aria-label="Close"></button>
+                </div>
+            </div>
+            <div class="window-body has-space">
+                <?php userInfo($user); ?>
+            </div>
             </div>
         </div>
         </div>

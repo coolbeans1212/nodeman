@@ -14,9 +14,20 @@ body {
 .desktop-icons {
     display: flex;
     flex-direction: column;
-    position: absolute;
-    bottom: 0;
 }
+
+.shortcut-group-left {
+    bottom: 0;
+    left: 0;
+    position: fixed;
+}
+
+.shortcut-group-right {
+    bottom: 0;
+    right: 0;
+    position: fixed;
+}
+
 .shortcut {
     display: flex;
     flex-direction: column;
