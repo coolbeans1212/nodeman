@@ -192,7 +192,7 @@ function createTabs($projects) {
 
 
 
-        <div class="window glass active hidden" id="progress" style="top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 99999;">
+        <div class="window glass active hidden topmost" id="progress" style="top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 99999;">
             <div class="title-bar">
                 <div class="title-bar-text">Processing...</div>
             </div>
@@ -202,7 +202,7 @@ function createTabs($projects) {
                 <button id="progress-ok" class="hidden">OK</button>
             </div>
         </div>
-    <div class="window glass active hidden" id="dialogue" style="top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 99999;">
+    <div class="window glass active hidden topmost" id="dialogue" style="top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 99999;">
             <div class="title-bar">
                 <div class="title-bar-text">Dialogue Box</div>
                 <div class="title-bar-controls">
