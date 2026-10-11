@@ -17,5 +17,6 @@ if (isset($_SESSION["user_id"])) {
         die();
     }
 } else {
+    header('Location: /account/login.php');
     die();
 }

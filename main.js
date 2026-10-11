@@ -80,7 +80,7 @@ for (let i  = 0, len = windowsArray.length; i < len; i++) {
         windowsArray.unshift(windowsArray.splice(clickedWindow, 1)[0]); // move clicked window to the start of the array
         console.log(`hello i am window ${clickedWindow} in the array and i have caused the array to CHANGE. IT CHANGED.`)
         for (let j = 0, len = windowsArray.length; j < len; j++) {
-            if (windowsArray[j].id != 'progress' && windowsArray[j].id != 'dialogue') { // this window should be always-on-top
+            if (windowsArray[j].id != 'progress' && windowsArray[j].id != 'dialogue' && windowsArray[j].classList.contains("topmost")) { // this window should be always-on-top
                 windowsArray[j].style.zIndex = 10000 - j;
             }
         }

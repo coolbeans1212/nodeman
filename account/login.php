@@ -32,19 +32,44 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="https://unpkg.com/7.css">
+    <title>NODEMAN::Login</title>
+    <link rel="stylesheet" href="/styles.css?i=<?php echo time();?>">
 </head>
 <body>
-      <h1>Log in</h1>
-    <form method="post">
-        <label for="username">Username</label><br>
-        <input type="text" name="username" id="username" value="<?= htmlspecialchars($_POST["username"] ?? "") ?>"><br>
-        <label for="password">Password</label><br>
-        <input type="password" name="password" id="password"><br>
-        <input type="submit" value="Log in">
-        <?php if (isset($_POST['password'])): //if this is set and the user is still on the login page, it means the credentials are incorrect ?>
-          <br><oblique>Invalid login</oblique>
-        <?php endif; ?>
-    </form>
+    <div class="window glass active" style="top: 50%; left: 50%; transform: translate(-50%, -50%);">
+        <div class="title-bar">
+            <div class="title-bar-text">Login to NODEMAN</div>
+            <div class="title-bar-controls">
+                <button aria-label="Help" id="login-help-button"></button>
+                <button aria-label="Close" disabled></button>
+            </div>
+        </div>
+        <div class="window-body has-space">
+            <form method="post">
+                <?php if (isset($_POST['password'])) { //if this is set and the user is still on the login page, it means the credentials are incorrect ?>
+                    <div class="bad">Invalid login credentials</div><br>
+                <?php } ?>
+                <label for="username">Username</label><br>
+                <input type="text" name="username" id="username" value="<?= htmlspecialchars($_POST["username"] ?? "") ?>"><br>
+                <label for="password">Password</label><br>
+                <input type="password" name="password" id="password"><br>
+                <button type="submit">Login</button>
+            </form>
+        </div>
     </div>
+    <div class="window glass active hidden topmost" style="top: 50%; left: 50%;" id="login-help-window">
+        <div class="title-bar">
+            <div class="title-bar-text">Account help</div>
+            <div class="title-bar-controls">
+                <button aria-label="Close" id="login-help-close"></button>
+            </div>
+        </div>
+        <div class="window-body has-space">
+            Administrators: to make a new account, please follow the instructions in INSTALL.md, under the subheading "Set up the database".
+        </div>
+    </div>
+    <script src="login.js"></script>
+    <script src="/main.js"></script>
 </body>
 </html>

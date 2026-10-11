@@ -169,9 +169,9 @@ function createTabs($projects) {
             <div class="window-body has-space">
             </div>
     </div>
-        <script src="/main.js"></script>
-        <script src="/forms.js"></script>
-        <script src="/live.js"></script>
+    <script src="/main.js"></script>
+    <script src="/forms.js"></script>
+    <script src="/live.js"></script>
     </body>
     <div class="hidden" id="javascript-sucks"></div>
 </html>
