@@ -54,6 +54,11 @@ function createTabs($projects) {
                     <img src="/files/images/user.png" alt="Account" class="icon">
                     <span>Your account</span>
                 </div>
+                <div class="shortcut" id="control-panel-shortcut">
+                    <img src="/files/images/controlpanel.png" alt="Control Panel" class="icon">
+                    <span>Control Panel</span>
+                </div>
+            </div>
         </div>
         <div class="window glass active hidden" id="projects" style="top: 10px; left: 10px;">
             <div class="title-bar">
@@ -167,7 +172,26 @@ function createTabs($projects) {
             </div>
             </div>
         </div>
+        <div class="window glass active hidden" id="control-panel" style="top: 10px; left: 10px;">
+            <div class="title-bar">
+                <div class="title-bar-text">Control Panel</div>
+                <div class="title-bar-controls">
+                    <button aria-label="Close"></button>
+                </div>
+            </div>
+            <div class="window-body has-space">
+                <menu role="tablist" aria-label="Control Panel Tabs" id="control-panel-tabs">
+                    <button role="tab" data-id="Personalisation" aria-controls="personalisation" aria-selected="true">Personalisation</button>
+                </menu>
+                <article id="personalisation" role="tabpanel" data-id="personalisation">
+                    hi
+                </article>
+            </div>
+            </div>
         </div>
+
+
+
         <div class="window glass active hidden" id="progress" style="top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 99999;">
             <div class="title-bar">
                 <div class="title-bar-text">Processing...</div>
