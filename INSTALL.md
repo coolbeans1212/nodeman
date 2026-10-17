@@ -115,6 +115,8 @@ sudo mkdir /var/log/nodeman -p
 sudo chmod +x /var /var/log /var/log/nodeman
 sudo chown www-data:www-data /var/log/nodeman -R
 sudo chmod 740 /var/log/nodeman -R
+sudo mkdir /var/www/.npm
+sudo chown www-data:www-data /var/www/.npm -R
 ```
 If you want the logs to be stored somewhere else, you also need to edit .env with the new LOGSLOCATION.  
 ## Create a project!  
