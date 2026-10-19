@@ -33,29 +33,29 @@ function createTabs($projects) {
             <div class="shortcut-group-left">
                 <div class="shortcut" id="projects-shortcut">
                     <img src="/files/images/node.svg" alt="NodeJS" class="icon">
-                    <span>Add or view projects</span>
+                    <span class="shortcut-text">Add or view projects</span>
                 </div>
                 <div class="shortcut" id="status-shortcut">
                     <img src="/files/images/node.svg" alt="NodeJS" class="icon">
-                    <span>Check or change status</span>
+                    <span class="shortcut-text">Check or change status</span>
                 </div>
                 <div class="shortcut" id="versions-shortcut">
                     <img src="/files/images/node.svg" alt="NodeJS" class="icon">
-                    <span>Rollback or upload version</span>
+                    <span class="shortcut-text">Rollback or upload version</span>
                 </div>
                 <div class="shortcut" id="npm-shortcut">
                     <img src="/files/images/node.svg" alt="NodeJS" class="icon">
-                    <span>Configure NPM</span>
+                    <span class="shortcut-text">Configure NPM</span>
                 </div>
             </div>
             <div class="shortcut-group-right">
                 <div class="shortcut" id="account-shortcut">
                     <img src="/files/images/user.png" alt="Account" class="icon">
-                    <span>Your account</span>
+                    <span class="shortcut-text">Your account</span>
                 </div>
                 <div class="shortcut" id="control-panel-shortcut">
                     <img src="/files/images/controlpanel.png" alt="Control Panel" class="icon">
-                    <span>Control Panel</span>
+                    <span class="shortcut-text">Control Panel</span>
                 </div>
             </div>
         </div>

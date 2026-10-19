@@ -66,6 +66,6 @@ document.getElementById('personalisation-font').addEventListener('change', funct
 });
 
 function reloadCSS() {
-    const href = "/customisablestyles.css.php?i=" + Date.now() / 1000;
-    document.getElementById('stylesheet').getAttribute('href') = href;
+    const href = "/customisablestyles.css.php?i=" + Date.now();
+    document.getElementById('stylesheet').setAttribute('href', href);
 }

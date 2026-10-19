@@ -185,3 +185,8 @@ th, td {
 .full-width {
     width: 100%;
 }
+
+.shortcut-text {
+    text-shadow: 0 0 10px #000, 0 0 10px #000, 0 0 10px #000, 0 0 5px #000, 0 0 5px #000;
+    color: white;
+}
