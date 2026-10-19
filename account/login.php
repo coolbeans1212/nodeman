@@ -32,7 +32,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="https://unpkg.com/7.css">
     <title>NODEMAN::Login</title>
     <link rel="stylesheet" href="/customisablestyles.css.php?i=<?php echo time();?>">
 </head>

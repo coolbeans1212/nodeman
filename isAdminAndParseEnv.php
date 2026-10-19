@@ -6,7 +6,9 @@ if ($env['DEBUG'] == 1) {
     error_reporting(E_ALL);
 }
 
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 $mysqli = require_once __DIR__ . "/db.php";
 if (isset($_SESSION["user_id"])) {
     $sql = "SELECT admin FROM users WHERE id = {$_SESSION["user_id"]}";

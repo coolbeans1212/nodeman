@@ -1,8 +1,13 @@
 <?php
 header('Content-Type: text/css');
-require_once __DIR__ . '/isAdminAndParseEnv.php';
-require_once __DIR__ . '/account/getUserPreferences.php';
-$userPreferences = getUserPreferences($mysqli);
+session_start();
+if (isset($_SESSION["user_id"])) {
+    require_once __DIR__ . "/isAdminAndParseEnv.php";
+    require_once __DIR__ . '/account/getUserPreferences.php';
+    $userPreferences = getUserPreferences($mysqli);
+} else {
+    $userPreferences = null;
+}
 ?>
 @import url("https://unpkg.com/<?php echo $userPreferences['css_version'] ?: '7.css'; ?>");
 @import url("/styles.css?i=<?php echo time();?>");
