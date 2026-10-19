@@ -76,6 +76,24 @@ CREATE TABLE `users` (
   UNIQUE KEY `username` (`username`),
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Table structure for table `user_preferences`
+--
+DROP TABLE IF EXISTS `user_preferences`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `user_preferences` (
+  `id` int NOT NULL,
+  `css_version` VARCHAR(255) DEFAULT '7.css',
+  `wallpaper` VARCHAR(255),
+  `font` VARCHAR(255),
+  PRIMARY KEY(`id`),
+  CONSTRAINT `fk_user_preferences_user`
+    FOREIGN KEY (`id`) REFERENCES `users` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;

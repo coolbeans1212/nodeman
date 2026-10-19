@@ -25,9 +25,8 @@ function createTabs($projects) {
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <link rel="stylesheet" href="https://unpkg.com/7.css">
         <title>NODEMAN</title>
-        <link rel="stylesheet" href="/styles.css?i=<?php echo time();?>">
+        <link id="stylesheet" rel="stylesheet" href="/customisablestyles.css.php?i=<?php echo time();?>"> <!-- also includes all the other stylesheets -->
     </head>
     <body>
         <div class="desktop-icons">
@@ -180,12 +179,7 @@ function createTabs($projects) {
                 </div>
             </div>
             <div class="window-body has-space">
-                <menu role="tablist" aria-label="Control Panel Tabs" id="control-panel-tabs">
-                    <button role="tab" data-id="Personalisation" aria-controls="personalisation" aria-selected="true">Personalisation</button>
-                </menu>
-                <article id="personalisation" role="tabpanel" data-id="personalisation">
-                    hi
-                </article>
+                <?php require_once __DIR__ . '/control.php'; ?>
             </div>
             </div>
         </div>
@@ -212,9 +206,9 @@ function createTabs($projects) {
             <div class="window-body has-space">
             </div>
     </div>
-    <script src="/main.js"></script>
-    <script src="/forms.js"></script>
-    <script src="/live.js"></script>
+    <script src="/main.js" defer></script>
+    <script src="/forms.js" defer></script>
+    <script src="/live.js" defer></script>
     </body>
     <div class="hidden" id="javascript-sucks"></div>
 </html>

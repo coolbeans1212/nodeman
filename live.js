@@ -57,3 +57,15 @@ let isVisibleObserver = new MutationObserver(function() {
     }
 });
 isVisibleObserver.observe(npmWindow, {attributes: true, attributeFilter: ["class"]});
+
+
+document.getElementById('personalisation-font').addEventListener('change', function (event) {
+    const element = event.target;
+    console.log(element);
+    element.style.font = element.value;
+});
+
+function reloadCSS() {
+    const href = "/customisablestyles.css.php?i=" + Date.now() / 1000;
+    document.getElementById('stylesheet').getAttribute('href') = href;
+}

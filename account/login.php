@@ -34,7 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <head>
     <link rel="stylesheet" href="https://unpkg.com/7.css">
     <title>NODEMAN::Login</title>
-    <link rel="stylesheet" href="/styles.css?i=<?php echo time();?>">
+    <link rel="stylesheet" href="/customisablestyles.css.php?i=<?php echo time();?>">
 </head>
 <body>
     <div class="window glass active" style="top: 50%; left: 50%; transform: translate(-50%, -50%);">
