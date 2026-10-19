@@ -60,13 +60,11 @@ Run the following commands:
 ```
 cd /var/www/nodeman/sql
 sudo mariadb -e "CREATE DATABASE IF NOT EXISTS nodeman;" && sudo mariadb nodeman < nodeman_schema.sql
-sudo mariadb -e "CREATE DATABASE IF NOT EXISTS users; && sudo mariadb users < users_schema.sql"
 sudo mariadb
 ```
 This last command will put you in the MariaDB shell. Enter the following:  
 ```
 CREATE USER 'nodeman'@'localhost' IDENTIFIED BY 'password'; --(change password to something more secure!)  
-GRANT ALL PRIVILEGES ON users.* TO 'nodeman'@'localhost';
 GRANT ALL PRIVILEGES ON nodeman.* TO 'nodeman'@'localhost';
 FLUSH PRIVILEGES;
 EXIT;
@@ -80,22 +78,21 @@ sudo nano .env
 ```
 Edit the file. For example, if you followed this guide exactly and didn't change the password like you were supposed to:  
 ```  
-DBPASSWORD=password  
-DEBUG=0  
-NODEBINARYLOCATION=/usr/bin/node  
-LOGSLOCATION=/var/log/nodeman/  
-DBADDRESS=localhost  
-DBUSER=nodeman  
-ACCOUNTDBNAME=users  
-NODEMANDBNAME=nodeman  
+DBPASSWORD=password
+DEBUG=0
+NODEBINARYLOCATION=/usr/bin/node
+LOGSLOCATION=/var/log/nodeman/
+DBADDRESS=localhost
+DBUSER=nodeman
+NODEMANDBNAME=nodeman
 ```  
-If you have done everything correctly so far, opening "localhost" in a web browser on the server should show a blank page, instead of a page that says something went wrong.  
+If you have done everything correctly so far, opening "localhost" in a web browser on the server should show a login page, instead of a page that says something went wrong.  
 ## Create a user  
 Right now, there is no way to create a user from the website. Do the following:  
 Go to [a website that lets you make a Bcrypt hash](https://it-tools.tech/bcrypt), enter a password, and copy the hash (begins with `$2a$`).  
 Run the following commands:  
 ```
-sudo mariadb users
+sudo mariadb nodeman
 ```
 Type the following into the MariaDB shell:  
 ```
