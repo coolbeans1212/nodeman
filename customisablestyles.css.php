@@ -7,8 +7,18 @@ $userPreferences = getUserPreferences($mysqli);
 @import url("https://unpkg.com/<?php echo $userPreferences['css_version'] ?: '7.css'; ?>");
 @import url("/styles.css?i=<?php echo time();?>");
 
+:root {
+    --default-font: <?php
+        if ($userPreferences['css_version'] == '7.css' || $userPreferences['css_version'] == '') {
+            echo 'var(--w7-font)';
+        } else {
+            echo '11pt "Pixelated MS Sans Serif", Arial';
+        }
+    ?>;
+}
+
 
 body {
     background-image: url('<?php echo $userPreferences['wallpaper'] ?: '/files/images/blissnight.webp'; ?>');
-    font: <?php echo $userPreferences['font'] ?: 'var(--w7-font)'; ?>;
+    font: <?php echo $userPreferences['font'] ?: 'var(--default-font)'; ?>
 }

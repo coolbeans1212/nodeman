@@ -4,7 +4,7 @@ require_once __DIR__ . '/account/getUserPreferences.php';
 
 $userPreferences = getUserPreferences($mysqli);
 
-$fonts = ['Default' => 'var(--w7-font)',
+$fonts = ['Default' => 'var(--default-font)',
 'Arial' => '9pt Arial' ,
 'Arial Black' => '9pt Arial Black',
 'Comic Sans MS' => '9pt Comic Sans MS',
