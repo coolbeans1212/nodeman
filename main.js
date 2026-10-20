@@ -18,7 +18,8 @@ for (let i  = 0, len = shortcuts.length; i < len; i++) {
             this.style.background = '';
         }
     });
-    shortcuts[i].addEventListener('mousedown', function() {
+    shortcuts[i].addEventListener('mousedown', function(event) {
+        event.preventDefault();
         this.style.background = '#4580c4';
         if (selectedShortcut !== this) {
             selectedShortcut.style.background = '';
@@ -26,8 +27,8 @@ for (let i  = 0, len = shortcuts.length; i < len; i++) {
         selectedShortcut = this;
     });
 }
-globalThis.addEventListener('mousedown', function () {
-    if (!shortcutContainer.contains(event.target)) {
+globalThis.addEventListener('mousedown', function (event) {
+    if (!shortcutContainer.contains(event.target) && !event.target.closest('.shortcut')) {
         selectedShortcut.style.background = '';
         selectedShortcut = document.getElementById("javascript-sucks");
     }

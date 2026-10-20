@@ -6,7 +6,7 @@ if (isset($_SESSION["user_id"])) {
     require_once __DIR__ . '/account/getUserPreferences.php';
     $userPreferences = getUserPreferences($mysqli);
 } else {
-    $userPreferences = null;
+    $userPreferences = [];
 }
 ?>
 @import url("https://unpkg.com/<?php echo $userPreferences['css_version'] ?: '7.css'; ?>");

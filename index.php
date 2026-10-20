@@ -31,31 +31,41 @@ function createTabs($projects) {
     <body>
         <div class="desktop-icons">
             <div class="shortcut-group-left">
-                <div class="shortcut" id="projects-shortcut">
-                    <img src="/files/images/node.svg" alt="NodeJS" class="icon">
-                    <span class="shortcut-text">Add or view projects</span>
+                <div class="shortcut-column">
+                    <div class="shortcut" id="projects-shortcut">
+                        <img src="/files/images/node.svg" alt="NodeJS" class="icon">
+                        <span class="shortcut-text">Add or view projects</span>
+                    </div>
+                    <div class="shortcut" id="status-shortcut">
+                        <img src="/files/images/node.svg" alt="NodeJS" class="icon">
+                        <span class="shortcut-text">Check or change status</span>
+                    </div>
+                    <div class="shortcut" id="versions-shortcut">
+                        <img src="/files/images/node.svg" alt="NodeJS" class="icon">
+                        <span class="shortcut-text">Rollback or upload version</span>
+                    </div>
+                    <div class="shortcut" id="npm-shortcut">
+                        <img src="/files/images/node.svg" alt="NodeJS" class="icon">
+                        <span class="shortcut-text">Configure NPM</span>
+                    </div>
                 </div>
-                <div class="shortcut" id="status-shortcut">
-                    <img src="/files/images/node.svg" alt="NodeJS" class="icon">
-                    <span class="shortcut-text">Check or change status</span>
-                </div>
-                <div class="shortcut" id="versions-shortcut">
-                    <img src="/files/images/node.svg" alt="NodeJS" class="icon">
-                    <span class="shortcut-text">Rollback or upload version</span>
-                </div>
-                <div class="shortcut" id="npm-shortcut">
-                    <img src="/files/images/node.svg" alt="NodeJS" class="icon">
-                    <span class="shortcut-text">Configure NPM</span>
+                <div class="shortcut-column">
+                    <div class="shortcut" id="utilities-shortcut">
+                        <img src="/files/images/folderstar.png" alt="Utilities" class="icon">
+                        <span class="shortcut-text">Utilities</span>
+                    </div>
                 </div>
             </div>
             <div class="shortcut-group-right">
-                <div class="shortcut" id="account-shortcut">
-                    <img src="/files/images/user.png" alt="Account" class="icon">
-                    <span class="shortcut-text">Your account</span>
-                </div>
-                <div class="shortcut" id="control-panel-shortcut">
-                    <img src="/files/images/controlpanel.png" alt="Control Panel" class="icon">
-                    <span class="shortcut-text">Control Panel</span>
+                <div class="shortcut-column">
+                    <div class="shortcut" id="account-shortcut">
+                        <img src="/files/images/user.png" alt="Account" class="icon">
+                        <span class="shortcut-text">Your account</span>
+                    </div>
+                    <div class="shortcut" id="control-panel-shortcut">
+                        <img src="/files/images/controlpanel.png" alt="Control Panel" class="icon">
+                        <span class="shortcut-text">Control Panel</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -183,7 +193,7 @@ function createTabs($projects) {
             </div>
             </div>
         </div>
-
+        <?php require_once __DIR__ . '/utilities/windows.php'; // has all the windows from the Utilities shortcut :) ?>
 
 
         <div class="window glass active hidden topmost" id="progress" style="top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 99999;">
