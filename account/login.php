@@ -20,8 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $user = $result->fetch_assoc();
    
     if ($user && password_verify($_POST["password"], $user["password"])) {
-        session_start();
-        session_regenerate_id();
+        session_regenerate_id(true);
         $_SESSION["user_id"] = $user["id"];
         header("Location: /");
         die();
