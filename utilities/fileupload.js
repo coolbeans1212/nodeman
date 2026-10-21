@@ -31,6 +31,3 @@ document.getElementById('utility-file-upload-key').addEventListener('change', fu
     linkPreview.scrollLeft = linkPreview.scrollWidth;
 });
 
-function utilityUploadFile() {
-    console.log("skibidi toilet")
-}
