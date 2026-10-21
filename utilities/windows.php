@@ -45,6 +45,8 @@ require_once __DIR__ . "/../isAdminAndParseEnv.php";
                     <button type="submit">UPLOAD</button>
                 </div>
             </form>
+            <br>
+            <?php require_once __DIR__ . '/filesuploadedtable.php'; ?>
         </article>
     </div>
 </div>
