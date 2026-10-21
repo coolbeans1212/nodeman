@@ -363,6 +363,7 @@ function utilityUploadFile() {
             failed = true;
             progressFailure();
         }
+        document.getElementById('utility-file-upload-form-part-two').classList.add('hidden');
         return responseText;
     }).then(data => {
         if (failed) {

@@ -13,17 +13,20 @@ document.getElementById('utility-file-upload-require-key').addEventListener('cli
     }
 });
 
+let fileUUID = crypto.randomUUID();
+
 document.getElementById('utility-file-upload-hidden').addEventListener('change', function () {
     document.getElementById('utility-file-upload-form-part-two').classList.remove('hidden');
+    fileUUID = crypto.randomUUID();
 });
 
-const fileUUID = crypto.randomUUID();
+
 let linkPreview = document.getElementById('utility-file-upload-link-preview');
 linkPreview.value = window.location.protocol + '//' + window.location.hostname + '/utilities/retrieveFile.php?i=' + fileUUID;
 linkPreview.scrollLeft = linkPreview.scrollWidth;
 document.getElementById('utility-file-upload-key').addEventListener('change', function () {
     const firstPart = window.location.protocol + '//' + window.location.hostname + '/utilities/retrieveFile.php';
-    let secondPart = '?i=' + encodeURIComponent(crypto.randomUUID());
+    let secondPart = '?i=' + encodeURIComponent(fileUUID);
     if (document.getElementById('utility-file-upload-key').value != '') {
         secondPart += '&k=' + encodeURIComponent(document.getElementById('utility-file-upload-key').value);
     }
