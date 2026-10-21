@@ -82,6 +82,7 @@ DBPASSWORD=password
 DEBUG=0
 NODEBINARYLOCATION=/usr/bin/node
 LOGSLOCATION=/var/log/nodeman/
+MISCDATADIR=/var/nodeman/data/
 DBADDRESS=localhost
 DBUSER=nodeman
 NODEMANDBNAME=nodeman
@@ -114,6 +115,10 @@ sudo chown www-data:www-data /var/log/nodeman -R
 sudo chmod 740 /var/log/nodeman -R
 sudo mkdir /var/www/.npm
 sudo chown www-data:www-data /var/www/.npm -R
+sudo chmod 740 /var/www/.npm -R
+sudo mkdir /var/nodeman -p
+sudo chown www-data:www-data /var/nodeman -R
+sudo chmod 740 /var/nodeman -R
 ```
 If you want the logs to be stored somewhere else, you also need to edit .env with the new LOGSLOCATION.  
 ## Create a project!  
