@@ -16,6 +16,7 @@ if (mysqli_num_rows($result) > 0) {
             <th>File Size</th>
             <th>File type</th>
             <th>Access URL</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -44,6 +45,7 @@ if (mysqli_num_rows($result) > 0) {
             }
             ?>
             <td><button class="thin-button" onclick="navigator.clipboard.writeText('<?php echo $accessUrl;?>')">Click to copy</button></td>
+            <td><button class="thin-button utility-file-upload-edit-button" data-id="<?php echo $file['id']?>" data-key-required="<?php echo $file['key_required'] ? '1' : '0'; ?>" data-key="<?php echo $file['access_key'];?>">Edit</button></td>
         </tr>
         <?php
     }
