@@ -63,3 +63,75 @@ Array.from(document.getElementsByClassName('utility-file-upload-edit-button')).f
         editDialogue.show();
     });
 });
+
+
+function deleteUploadedFile(id) {
+    let failed = false;
+    progressReset();
+    fetch(globalThis.location.origin + "/utilities/actions/fileupload.php", {
+        method: "DELETE",
+        body: JSON.stringify({
+            id: id
+        })
+    }).then(async response => {
+        let responseText = await response.text();
+        console.log(response.ok);
+        if (response.ok && !responseText.includes("error")) {
+            failed = false;
+            progressSuccess(true);
+        } else {
+            failed = true;
+            progressFailure();
+        }
+        return responseText;
+    }).then(data => {
+        if (failed) {
+            progressFailure(data);
+        }
+    }).catch(error => {
+        failed = true;
+        progressFailure(error.toString());
+    });
+}
+
+function updateUploadedFile(id) {
+    let failed = false;
+    progressReset();
+    let requireKey = false;
+    try {
+        requireKey = document.getElementById("dialogue-checkbox-" + id).checked;
+    } catch {
+        requireKey = false;
+    }
+    let key = document.getElementById("dialogue-text-" + id).value;
+    fetch(globalThis.location.origin + "/utilities/actions/fileupload.php", {
+        method: "PATCH",
+        body: JSON.stringify({
+            id: id,
+            requireKey: requireKey,
+            key: key
+        })
+    }).then(async response => {
+        let responseText = await response.text();
+        console.log(response.ok);
+        if (response.ok && !responseText.includes("error")) {
+            failed = false;
+            progressSuccess(true);
+        } else {
+            failed = true;
+            progressFailure();
+        }
+        return responseText;
+    }).then(data => {
+        if (failed) {
+            progressFailure(data);
+        }
+    }).catch(error => {
+        failed = true;
+        progressFailure(error.toString());
+    });
+}
+
+function reuploadUploadedFile(id) {
+    console.log('reupload ' + id);
+}

@@ -30,7 +30,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') { // upload a new file
 
 if ($_SERVER['REQUEST_METHOD'] == 'DELETE') { // delete a file
     $data = json_decode(file_get_contents('php://input'), true);
-    var_dump($data);
     $sql = "SELECT filename FROM utility_file_uploads WHERE id = ?";
     $stmt = $mysqli->prepare($sql);
     $stmt->bind_param('s', $data['id']);
@@ -54,7 +53,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'DELETE') { // delete a file
     if (!$stmt->execute()) {
         sqlError($mysqli->error);
     }
-    
-    http_response_code(204);
 
+    http_response_code(204);
+}
+
+if ($_SERVER['REQUEST_METHOD'] == 'PATCH') { // update a file's metadata
+    $data = json_decode(file_get_contents('php://input'), true);
+    var_dump($data);
+    $sql = "UPDATE utility_file_uploads SET key_required = ?, access_key = ? WHERE id = ?";
+    $stmt = $mysqli->prepare($sql);
+    $data['requireKey'] = (int)$data['requireKey'];
+    $stmt->bind_param('iss', $data['requireKey'], $data['key'], $data['id']);
+    if (!$stmt->execute()) {
+        sqlError($mysqli->error);
+    }
 }
