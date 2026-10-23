@@ -374,3 +374,39 @@ function utilityUploadFile() {
         progressFailure(error.toString());
     });
 }
+
+function deleteUploadedFile(id) {
+    progressReset();
+    fetch(globalThis.location.origin + "/utilities/actions/fileupload.php", {
+        method: "DELETE",
+        body: JSON.stringify({
+            id: id
+        })
+    }).then(async response => {
+        let responseText = await response.text();
+        console.log(response.ok);
+        if (response.ok && !responseText.includes("error")) {
+            failed = false;
+            progressSuccess(true);
+        } else {
+            failed = true;
+            progressFailure();
+        }
+        return responseText;
+    }).then(data => {
+        if (failed) {
+            progressFailure(data);
+        }
+    }).catch(error => {
+        failed = true;
+        progressFailure(error.toString());
+    });
+}
+
+function updateUploadedFile(id) {
+    console.log('update ' + id);
+}
+
+function reuploadUploadedFile(id) {
+    console.log('reupload ' + id);
+}

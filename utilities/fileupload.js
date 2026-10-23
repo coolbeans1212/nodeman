@@ -44,6 +44,7 @@ Array.from(document.getElementsByClassName('utility-file-upload-edit-button')).f
             {element: "button", id: "dialogue-delete-button-" + button.dataset.id, type: "button", innerhtml: "DELETE", style: "color: red;", inside: "dialogue-button-container-" + button.dataset.id},
             {element: "button", id: "dialogue-reupload-button-" + button.dataset.id, type: "button", innerhtml: "RE-UPLOAD", inside: "dialogue-button-container-" + button.dataset.id},
             {element: "hr", inside: "dialogue-form-" + button.dataset.id},
+            {element: "input", type: "file", class: "hidden", id: "dialogue-file-" + button.dataset.id, inside: "dialogue-form-" + button.dataset.id},
             {element: "input", type: "checkbox", id: "dialogue-checkbox-" + button.dataset.id, inside: "dialogue-form-" + button.dataset.id},
             {element: "label", for: "dialogue-checkbox-" + button.dataset.id, innerhtml: "Require a key to access", inside: "dialogue-form-" + button.dataset.id},
             {element: "br", inside: "dialogue-form-" + button.dataset.id},
@@ -55,22 +56,10 @@ Array.from(document.getElementsByClassName('utility-file-upload-edit-button')).f
             editDialogue.element.querySelector('#dialogue-checkbox-' + button.dataset.id).checked = true;
         }
         editDialogue.element.querySelector('#dialogue-text-' + button.dataset.id).value = button.dataset.key;
-        editDialogue.element.querySelector('#dialogue-delete-button-' + button.dataset.id).addEventListener('click', function () {deleteUploadedFile(button.dataset.id); editDialogue.remove()});
-        editDialogue.element.querySelector('#dialogue-update-button-' + button.dataset.id).addEventListener('click', function () {updateUploadedFile(button.dataset.id)});
-        editDialogue.element.querySelector('#dialogue-reupload-button-' + button.dataset.id).addEventListener('click', function () {reuploadUploadedFile(button.dataset.id)});
-
+        editDialogue.element.querySelector('#dialogue-delete-button-' + button.dataset.id).addEventListener('click', function () {deleteUploadedFile(button.dataset.id); editDialogue.remove();});
+        editDialogue.element.querySelector('#dialogue-update-button-' + button.dataset.id).addEventListener('click', function () {updateUploadedFile(button.dataset.id); editDialogue.remove();});
+        editDialogue.element.querySelector('#dialogue-reupload-button-' + button.dataset.id).addEventListener('click', function () {editDialogue.element.querySelector('#dialogue-file-' + button.dataset.id).click();});
+        editDialogue.element.querySelector('#dialogue-file-' + button.dataset.id).addEventListener('change', function () {reuploadUploadedFile(button.dataset.id); editDialogue.remove();});
         editDialogue.show();
     });
 });
-
-function deleteUploadedFile(id) {
-    console.log('delete ' + id);
-}
-
-function updateUploadedFile(id) {
-    console.log('update ' + id);
-}
-
-function reuploadUploadedFile(id) {
-    console.log('reupload ' + id);
-}
