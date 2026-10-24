@@ -1,7 +1,7 @@
 /*M!999999\- enable the sandbox mode */ 
 -- MariaDB dump 10.19-11.8.6-MariaDB, for debian-linux-gnu (aarch64)
 --
--- Host: localhost    Database: nodeman
+-- Host: localhost    Database: nodemandev
 -- ------------------------------------------------------
 -- Server version	11.8.6-MariaDB-0+deb13u1 from Debian
 
@@ -33,7 +33,64 @@ CREATE TABLE `projects` (
   UNIQUE KEY `uniqueprojname` (`name`) USING HASH,
   KEY `fk_projects_current_version` (`current_version`),
   CONSTRAINT `fk_projects_current_version` FOREIGN KEY (`current_version`) REFERENCES `versions` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `user_preferences`
+--
+
+DROP TABLE IF EXISTS `user_preferences`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `user_preferences` (
+  `id` int(11) NOT NULL,
+  `css_version` varchar(255) DEFAULT '7',
+  `wallpaper` varchar(255) DEFAULT NULL,
+  `font` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_user_preferences_user` FOREIGN KEY (`id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `users`
+--
+
+DROP TABLE IF EXISTS `users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `users` (
+  `username` varchar(25) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `admin` tinyint(1) DEFAULT NULL,
+  `date_created` datetime DEFAULT current_timestamp(),
+  `pfp` varchar(30) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username` (`username`),
+  UNIQUE KEY `username_2` (`username`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `utility_file_uploads`
+--
+
+DROP TABLE IF EXISTS `utility_file_uploads`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `utility_file_uploads` (
+  `id` varchar(36) NOT NULL,
+  `key_required` tinyint(1) DEFAULT 0,
+  `access_key` varchar(255) DEFAULT NULL,
+  `date_created` datetime DEFAULT current_timestamp(),
+  `filename` varchar(255) DEFAULT NULL,
+  `filesize` int(10) unsigned DEFAULT NULL,
+  `mime` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -57,43 +114,6 @@ CREATE TABLE `versions` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
---
--- Table structure for table `users`
---
-
-DROP TABLE IF EXISTS `users`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `users` (
-  `username` varchar(25) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `email` varchar(255) DEFAULT NULL,
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `admin` tinyint(1) DEFAULT NULL,
-  `date_created` datetime DEFAULT current_timestamp(),
-  `pfp` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `username` (`username`),
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Table structure for table `user_preferences`
---
-DROP TABLE IF EXISTS `user_preferences`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `user_preferences` (
-  `id` int NOT NULL,
-  `css_version` VARCHAR(255) DEFAULT '7.css',
-  `wallpaper` VARCHAR(255),
-  `font` VARCHAR(255),
-  PRIMARY KEY(`id`),
-  CONSTRAINT `fk_user_preferences_user`
-    FOREIGN KEY (`id`) REFERENCES `users` (`id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
@@ -102,4 +122,4 @@ CREATE TABLE `user_preferences` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2026-10-06 22:43:32
+-- Dump completed on 2026-10-24 13:05:20
