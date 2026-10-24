@@ -133,5 +133,32 @@ function updateUploadedFile(id) {
 }
 
 function reuploadUploadedFile(id) {
-    console.log('reupload ' + id);
+    let failed = false;
+    progressReset();
+    let fileInput = document.getElementById("dialogue-file-" + id);
+    let formData = new FormData();
+    formData.append("id", id);
+    formData.append("file", fileInput.files[0]);
+    fetch(globalThis.location.origin + "/utilities/actions/fileupload.php", {
+        method: "PUT",
+        body: formData,
+    }).then(async response => {
+        let responseText = await response.text();
+        console.log(response.ok);
+        if (response.ok && !responseText.includes("error")) {
+            failed = false;
+            progressSuccess(true);
+        } else {
+            failed = true;
+            progressFailure();
+        }
+        return responseText;
+    }).then(data => {
+        if (failed) {
+            progressFailure(data);
+        }
+    }).catch(error => {
+        failed = true;
+        progressFailure(error.toString());
+    });
 }

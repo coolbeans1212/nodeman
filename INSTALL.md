@@ -7,7 +7,7 @@ sudo apt upgrade -y && sudo apt update -y
 sudo apt install apache2 mariadb-server php8.4 php8.4-mysql php8.4-cli php8.4-xml php8.4-zip libapache2-mod-php8.4 git curl ca-certificates unzip nodejs npm -y
 ```
 > [!NOTE]  
-> If there is an error saying "Unable to locate package php8.4", run `apt search php | grep '^php[0-9]\+'` to find the version of PHP that is currently being served.  
+> If there is an error saying "Unable to locate package php8.4", run `apt search php | grep '^php[0-9]\+'` to find the version of PHP that is currently being served. It must be PHP 8.4 or greater.  
 ## Clone the repository  
 Run the following commands in the terminal:  
 ```
