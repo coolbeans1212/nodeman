@@ -18,13 +18,11 @@ let fileUUID = crypto.randomUUID();
 document.getElementById('utility-file-upload-hidden').addEventListener('change', function () {
     document.getElementById('utility-file-upload-form-part-two').classList.remove('hidden');
     fileUUID = crypto.randomUUID();
+    updateLinkPreview();
 });
 
-
-let linkPreview = document.getElementById('utility-file-upload-link-preview');
-linkPreview.value = window.location.protocol + '//' + window.location.hostname + '/utilities/retrieveFile.php?i=' + fileUUID;
-linkPreview.scrollLeft = linkPreview.scrollWidth;
-document.getElementById('utility-file-upload-key').addEventListener('change', function () {
+function updateLinkPreview() {
+    const linkPreview = document.getElementById('utility-file-upload-link-preview');
     const firstPart = window.location.protocol + '//' + window.location.hostname + '/utilities/retrieveFile.php';
     let secondPart = '?i=' + encodeURIComponent(fileUUID);
     if (document.getElementById('utility-file-upload-key').value != '') {
@@ -32,6 +30,10 @@ document.getElementById('utility-file-upload-key').addEventListener('change', fu
     }
     linkPreview.value = firstPart + secondPart;
     linkPreview.scrollLeft = linkPreview.scrollWidth;
+}
+
+document.getElementById('utility-file-upload-key').addEventListener('change', function () {
+    updateLinkPreview();
 });
 
 
@@ -63,6 +65,47 @@ Array.from(document.getElementsByClassName('utility-file-upload-edit-button')).f
         editDialogue.show();
     });
 });
+
+function utilityUploadFile() {
+    let failed = false;
+    progressReset();
+    let fileInput = document.getElementById("utility-file-upload-hidden");
+    let requireKey = false;
+    try {
+        requireKey = document.getElementById("utility-file-upload-require-key").checked;
+    } catch {
+        requireKey = false;
+    }
+    let key = document.getElementById("utility-file-upload-key").value;
+    let formData = new FormData(); // meow
+    formData.append("id", fileUUID);
+    formData.append("require_key", requireKey);
+    formData.append("key", key);
+    formData.append("file", fileInput.files[0]);
+    fetch(globalThis.location.origin + "/utilities/actions/fileupload.php", {
+        method: "POST",
+        body: formData,
+    }).then(async response => {
+        let responseText = await response.text();
+        console.log(response.ok);
+        if (response.ok && !responseText.includes("error")) {
+            failed = false;
+            progressSuccess(true);
+        } else {
+            failed = true;
+            progressFailure();
+        }
+        document.getElementById('utility-file-upload-form-part-two').classList.add('hidden');
+        return responseText;
+    }).then(data => {
+        if (failed) {
+            progressFailure(data);
+        }
+    }).catch(error => {
+        failed = true;
+        progressFailure(error.toString());
+    });
+}
 
 
 function deleteUploadedFile(id) {
