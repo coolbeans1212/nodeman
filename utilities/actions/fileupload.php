@@ -1,18 +1,18 @@
 <?php
 require_once __DIR__ . '/../../isAdminAndParseEnv.php';
-function sqlError($error) {
+function sqlError(string $error): void {
     http_response_code(500);
     die('SQL ERROR: ' . $error);
 }
 
-function dieIfUuidInvalid($id) {
+function dieIfUuidInvalid(string $id): void {
     if (!preg_match('/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i', $id)) {
         http_response_code(400);
         die('Invalid UUID.');
     }
 }
 
-function getFileExtensionFromId($id, $mysqli) {
+function getFileExtensionFromId(string $id, mysqli $mysqli): string {
     $sql = "SELECT filename FROM utility_file_uploads WHERE id = ?";
     $stmt = $mysqli->prepare($sql);
     $stmt->bind_param('s', $id);
@@ -27,23 +27,49 @@ function getFileExtensionFromId($id, $mysqli) {
     return pathinfo($filename, PATHINFO_EXTENSION);
 }
 
-function checkIdAlreadyExists($id, $mysqli) {
+function checkIdAlreadyExists(string $id, mysqli $mysqli): bool {
     $sql = "SELECT COUNT(1) FROM utility_file_uploads WHERE id = ?";
     $stmt = $mysqli->prepare($sql);
     $stmt->bind_param('s', $id);
     $stmt->execute();
     $result = $stmt->get_result();
     $result = $result->fetch_assoc();
-    return $result['COUNT(1)'];
+    return (bool)$result['COUNT(1)'];
+}
+
+function uploadErrorMessage(int $code): string {
+    return match ($code) {
+        UPLOAD_ERR_OK => 'No error.',
+        UPLOAD_ERR_INI_SIZE => 'Uploaded file exceeded the server file size limit. Ask the administrator to increase upload_max_filesize in php.ini.',
+        UPLOAD_ERR_FORM_SIZE => 'Uploaded file exceeded the maximum file size allowed.',
+        UPLOAD_ERR_PARTIAL => 'Uploaded file could not finish uploading.',
+        UPLOAD_ERR_NO_FILE => 'No file was uploaded.',
+        UPLOAD_ERR_NO_TMP_DIR => 'Server error: no temporary directory to store uploads exists.',
+        UPLOAD_ERR_CANT_WRITE => 'Server error: could not write the uploaded file to disk.',
+        UPLOAD_ERR_EXTENSION => 'A PHP extension prevented the upload.',
+        default => 'Upload error code ' . $code . '.'
+    };
+}
+
+function uploadErrorHttpStatusCode(int $code): int {
+    return match ($code) {
+        UPLOAD_ERR_OK => 200,
+        UPLOAD_ERR_INI_SIZE => 413,
+        UPLOAD_ERR_FORM_SIZE => 413,
+        UPLOAD_ERR_PARTIAL => 400,
+        UPLOAD_ERR_NO_FILE => 400,
+        UPLOAD_ERR_NO_TMP_DIR => 500,
+        UPLOAD_ERR_CANT_WRITE => 500,
+        UPLOAD_ERR_EXTENSION => 500,
+        default => 400
+    };
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') { // upload a new file
-    var_dump($_FILES);
-    var_dump(ini_get('upload_max_filesize'), ini_get('post_max_size'));
-
-    if ($_FILES['file']['error'] ?? UPLOAD_ERR_NO_FILE !== UPLOAD_ERR_OK) {
-        http_response_code(400);
-        die('File was not uploaded OK.');
+    $fileError = $_FILES['file']['error'] ?? UPLOAD_ERR_NO_FILE;
+    if ($fileError !== UPLOAD_ERR_OK) {
+        http_response_code(uploadErrorHttpStatusCode($error));
+        die(uploadErrorMessage($error));
     }
 
     if (!is_dir($env['MISCDATADIR'] . DIRECTORY_SEPARATOR . 'uploads') && !mkdir($env['MISCDATADIR'] . DIRECTORY_SEPARATOR . 'uploads', 0755, true)) {
@@ -129,6 +155,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'PUT') { // update a file's contents
         http_response_code(404);
         die('File with ID does not exist.');
     }
+    $fileError = $files['file']['error'] ?? UPLOAD_ERR_NO_FILE;
+    if ($fileError !== UPLOAD_ERR_OK) {
+        http_response_code(uploadErrorHttpStatusCode($error));
+        die(uploadErrorMessage($error));
+    }
     $oldFileExt = getFileExtensionFromId($data['id'], $mysqli);
     $newFileExt = pathinfo($files['file']['name'], PATHINFO_EXTENSION);
     if ($oldFileExt == -1) {
@@ -148,11 +179,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'PUT') { // update a file's contents
         http_response_code(500);
         die("Could not delete the original file.");
     }
-    if (!move_uploaded_file($files['file']['tmp_name'], $env['MISCDATADIR'] . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . $data['id'] . '.' . $newFileExt)) {
+    $tempfile = $env['MISCDATADIR'] . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'temp-' . rand();
+    $file = $env['MISCDATADIR'] . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . $data['id'] . '.' . $newFileExt;
+    if (!move_uploaded_file($files['file']['tmp_name'], $tempfile)) {
         $mysqli->rollback();
         http_response_code(500);
         die("Could not save the updated file.");
     }
+    rename($tempfile, $file);
     $mysqli->commit();
 
 }
