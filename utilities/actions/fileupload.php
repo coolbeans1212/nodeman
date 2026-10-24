@@ -173,20 +173,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'PUT') { // update a file's contents
     if (!$stmt->execute()) {
         sqlError($mysqli->error);
     }
-    $file = $env['MISCDATADIR'] . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . $data['id'] . '.' . $oldFileExt;
-    if (is_file($file) && !unlink($file)) {
-        $mysqli->rollback();
-        http_response_code(500);
-        die("Could not delete the original file.");
-    }
     $tempfile = $env['MISCDATADIR'] . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'temp-' . rand();
-    $file = $env['MISCDATADIR'] . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . $data['id'] . '.' . $newFileExt;
     if (!move_uploaded_file($files['file']['tmp_name'], $tempfile)) {
         $mysqli->rollback();
         http_response_code(500);
         die("Could not save the updated file.");
     }
-    rename($tempfile, $file);
+    $oldFile = $env['MISCDATADIR'] . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . $data['id'] . '.' . $oldFileExt;
+    if (is_file($oldFile) && !unlink($oldFile)) {
+        $mysqli->rollback();
+        http_response_code(500);
+        die("Could not delete the original file.");
+    }
+    $newFile = $env['MISCDATADIR'] . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . $data['id'] . '.' . $newFileExt;
+    rename($tempfile, $newFile);
     $mysqli->commit();
 
 }
