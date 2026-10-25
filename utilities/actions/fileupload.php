@@ -43,7 +43,7 @@ function uploadErrorMessage(int $code): string {
         UPLOAD_ERR_INI_SIZE => 'Uploaded file exceeded the server file size limit. Ask the administrator to increase upload_max_filesize in php.ini.',
         UPLOAD_ERR_FORM_SIZE => 'Uploaded file exceeded the maximum file size allowed.',
         UPLOAD_ERR_PARTIAL => 'Uploaded file could not finish uploading.',
-        UPLOAD_ERR_NO_FILE => 'No file was uploaded.',
+        UPLOAD_ERR_NO_FILE => 'No file was uploaded or uploaded data exceeded the server data size limit. If you are 1000‰ sure that a file was uploaded, ask the administrator to increase post_max_size in php.ini.',
         UPLOAD_ERR_NO_TMP_DIR => 'Server error: no temporary directory to store uploads exists.',
         UPLOAD_ERR_CANT_WRITE => 'Server error: could not write the uploaded file to disk.',
         UPLOAD_ERR_EXTENSION => 'A PHP extension prevented the upload.',
@@ -68,8 +68,8 @@ function uploadErrorHttpStatusCode(int $code): int {
 if ($_SERVER['REQUEST_METHOD'] == 'POST') { // upload a new file
     $fileError = $_FILES['file']['error'] ?? UPLOAD_ERR_NO_FILE;
     if ($fileError !== UPLOAD_ERR_OK) {
-        http_response_code(uploadErrorHttpStatusCode($error));
-        die(uploadErrorMessage($error));
+        http_response_code(uploadErrorHttpStatusCode($fileError));
+        die(uploadErrorMessage($fileError));
     }
 
     if (!is_dir($env['MISCDATADIR'] . DIRECTORY_SEPARATOR . 'uploads') && !mkdir($env['MISCDATADIR'] . DIRECTORY_SEPARATOR . 'uploads', 0755, true)) {
@@ -149,7 +149,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'PATCH') { // update a file's metadata
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'PUT') { // update a file's contents
-    [$data, $files] = request_parse_body(); // gatekept to php 8.4 😔
+    try {
+        [$data, $files] = request_parse_body(); // gatekept to php 8.4 😔
+    } catch (RequestParseBodyException $e) {
+        http_response_code(413);
+        die('Uploaded data exceeded the server data size limit. Ask the administrator to increase post_max_size in php.ini.');
+    }
+    
     dieIfUuidInvalid($data['id']);
     if (!checkIdAlreadyExists($data['id'], $mysqli)) {
         http_response_code(404);
@@ -157,8 +163,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'PUT') { // update a file's contents
     }
     $fileError = $files['file']['error'] ?? UPLOAD_ERR_NO_FILE;
     if ($fileError !== UPLOAD_ERR_OK) {
-        http_response_code(uploadErrorHttpStatusCode($error));
-        die(uploadErrorMessage($error));
+        http_response_code(uploadErrorHttpStatusCode($fileError));
+        die(uploadErrorMessage($fileError));
     }
     $oldFileExt = getFileExtensionFromId($data['id'], $mysqli);
     $newFileExt = pathinfo($files['file']['name'], PATHINFO_EXTENSION);
