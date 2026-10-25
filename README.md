@@ -9,4 +9,4 @@ PHP Utility for managing node.js projects on GNU/Linux systems, using the 7.css 
 ## Installation Guide
 See INSTALL.md
 <hr>
-<img width="2559" height="1439" alt="image" src="https://github.com/user-attachments/assets/62c2a2f1-a2c7-4a07-b0bf-e73c46368bf6" />
+<img width="2560" height="1440" alt="image" src="https://github.com/user-attachments/assets/59eb9694-1e58-4dd0-9f9d-3f61e3d556bb" />
