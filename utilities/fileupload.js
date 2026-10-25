@@ -247,9 +247,10 @@ function reuploadUploadedFile(id) {
     let failed = false;
     progressReset();
     let fileInput = document.getElementById("dialogue-file-" + id);
+    let file = fileInput.files[0];
     let formData = new FormData();
     formData.append("id", id);
-    formData.append("file", fileInput.files[0]);
+    formData.append("file", file);
     fetch(globalThis.location.origin + "/utilities/actions/fileupload.php", {
         method: "PUT",
         body: formData,
@@ -258,7 +259,7 @@ function reuploadUploadedFile(id) {
         console.log(response.ok);
         if (response.ok && !responseText.includes("error")) {
             failed = false;
-            progressSuccess(true);
+            progressSuccess();
         } else {
             failed = true;
             progressFailure();
@@ -267,6 +268,14 @@ function reuploadUploadedFile(id) {
     }).then(data => {
         if (failed) {
             progressFailure(data);
+        } else {
+            const row = document.getElementById('utility-file-upload-table-row-' + id);
+            const filenameField = row.querySelector('[data-field="filename"]');
+            const filesizeField = row.querySelector('[data-field="filesize"]');
+            const filetypeField = row.querySelector('[data-field="filetype"]');
+            filenameField.textContent = file.name;
+            filesizeField.textContent = file.size;
+            filetypeField.textContent = file.type;
         }
     }).catch(error => {
         failed = true;
