@@ -36,8 +36,7 @@ document.getElementById('utility-file-upload-key').addEventListener('change', fu
     updateLinkPreview();
 });
 
-
-Array.from(document.getElementsByClassName('utility-file-upload-edit-button')).forEach(function (button) {
+function addEventListenerToEditButton(button) {
     button.addEventListener('click', function() {
         console.log(button.dataset.id);
         let editDialogue = new DialogueBox('edit-' + button.dataset.id, 'Edit uploaded file', [
@@ -64,11 +63,16 @@ Array.from(document.getElementsByClassName('utility-file-upload-edit-button')).f
         editDialogue.element.querySelector('#dialogue-file-' + button.dataset.id).addEventListener('change', function () {reuploadUploadedFile(button.dataset.id); editDialogue.remove();});
         editDialogue.show();
     });
+}
+
+Array.from(document.getElementsByClassName('utility-file-upload-edit-button')).forEach(function (button) {
+    addEventListenerToEditButton(button);
 });
 
 function utilityUploadFile() {
     let failed = false;
     progressReset();
+    const id = fileUUID;
     let fileInput = document.getElementById("utility-file-upload-hidden");
     let requireKey = false;
     try {
@@ -78,7 +82,7 @@ function utilityUploadFile() {
     }
     let key = document.getElementById("utility-file-upload-key").value;
     let formData = new FormData(); // meow
-    formData.append("id", fileUUID);
+    formData.append("id", id);
     formData.append("require_key", requireKey);
     formData.append("key", key);
     formData.append("file", fileInput.files[0]);
@@ -90,7 +94,7 @@ function utilityUploadFile() {
         console.log(response.ok);
         if (response.ok && !responseText.includes("error")) {
             failed = false;
-            progressSuccess(true);
+            progressSuccess();
         } else {
             failed = true;
             progressFailure();
@@ -100,6 +104,47 @@ function utilityUploadFile() {
     }).then(data => {
         if (failed) {
             progressFailure(data);
+        } else {
+            const date = new Date();
+            const dateString = date.toISOString().replace('T', ' ').split('.')[0];
+            const file = fileInput.files[0];
+            const table = document.getElementById("utility-file-upload-table");
+            const tableBody = table.getElementsByTagName("tbody")[0];
+            const newRow = document.createElement("tr");
+            const rowValues = [file.name, key ?? '', dateString, file.size, file.type];
+            rowValues.forEach(function (value) {
+                const cell = newRow.insertCell();
+                cell.innerHTML = value;
+            });
+            tableBody.insertBefore(newRow, tableBody.firstChild);
+
+            const copyUrlButtonCell = newRow.insertCell();
+            const copyUrlButton = document.createElement("button");
+            copyUrlButton.classList.add("thin-button");
+            copyUrlButton.textContent = "Click to copy";
+            copyUrlButtonCell.appendChild(copyUrlButton);
+            copyUrlButton.addEventListener('click', function () {
+                const firstPart = window.location.protocol + '//' + window.location.hostname + '/utilities/retrieveFile.php';
+                let secondPart = '?i=' + encodeURIComponent(id);
+                if (key != '') {
+                    secondPart += '&k=' + encodeURIComponent(key);
+                }
+                void navigator.clipboard.writeText(firstPart + secondPart);
+            });
+
+            const editButtonCell = newRow.insertCell();
+            const editButton = document.createElement("button");
+            editButton.classList.add("thin-button");
+            editButton.textContent = "Edit";
+            editButtonCell.appendChild(editButton);
+            editButton.dataset.id = id;
+            if (requireKey) {
+                editButton.dataset.keyRequired = 1;
+            } else {
+                editButton.dataset.keyRequired = 0;
+            }
+            editButton.dataset.key = key;
+            addEventListenerToEditButton(editButton);
         }
     }).catch(error => {
         failed = true;

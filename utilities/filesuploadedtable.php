@@ -7,7 +7,7 @@ $result = $stmt->get_result();
 <?php
 if (mysqli_num_rows($result) > 0) {
     ?>
-    <table>
+    <table id="utility-file-upload-table">
     <thead>
         <tr>
             <th>File</th>
