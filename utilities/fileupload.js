@@ -111,6 +111,7 @@ function utilityUploadFile() {
             const table = document.getElementById("utility-file-upload-table");
             const tableBody = table.getElementsByTagName("tbody")[0];
             const newRow = document.createElement("tr");
+            newRow.id = 'utility-file-upload-table-row-' + id;
             const rowValues = [file.name, key ?? '', dateString, file.size, file.type];
             rowValues.forEach(function (value) {
                 const cell = newRow.insertCell();
@@ -166,7 +167,7 @@ function deleteUploadedFile(id) {
         console.log(response.ok);
         if (response.ok && !responseText.includes("error")) {
             failed = false;
-            progressSuccess(true);
+            progressSuccess();
         } else {
             failed = true;
             progressFailure();
@@ -175,6 +176,10 @@ function deleteUploadedFile(id) {
     }).then(data => {
         if (failed) {
             progressFailure(data);
+        } else {
+            console.log('utility-file-upload-table-row-' + id);
+            const row = document.getElementById('utility-file-upload-table-row-' + id);
+            row.remove();
         }
     }).catch(error => {
         failed = true;

@@ -23,7 +23,7 @@ if (mysqli_num_rows($result) > 0) {
     <?php
     while ($file = mysqli_fetch_assoc($result)) {
         ?>
-        <tr>
+        <tr id="<?php echo 'utility-file-upload-table-row-' . $file['id']; ?>">
             <td><?php echo $file['filename']; ?></td>
             <td><?php echo $file['access_key']; ?></td>
             <td><?php echo $file['date_created']; ?></td>
