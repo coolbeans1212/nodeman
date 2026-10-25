@@ -59,5 +59,6 @@ $fonts = ['Default' => 'var(--default-font)',
             </div>
         </details>
         <button type="submit">Apply</input>
+    </form>
 </article>
 <script src="/control.js" defer></script>
