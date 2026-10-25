@@ -44,7 +44,7 @@ if (mysqli_num_rows($result) > 0) {
                 $accessUrl .= '&k=' . urlencode($file['access_key']);
             }
             ?>
-            <td data-field="access-url"><button class="thin-button" onclick="navigator.clipboard.writeText('<?php echo $accessUrl;?>')">Click to copy</button></td>
+            <td data-field="access-url"><button class="thin-button" onclick="copyText('<?php echo $accessUrl;?>')">Click to copy</button></td>
             <td data-field="actions"><button class="thin-button utility-file-upload-edit-button" data-id="<?php echo $file['id']?>" data-key-required="<?php echo $file['key_required'] ? '1' : '0'; ?>" data-key="<?php echo $file['access_key'];?>">Edit</button></td>
         </tr>
         <?php
