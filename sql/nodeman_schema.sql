@@ -45,7 +45,7 @@ DROP TABLE IF EXISTS `user_preferences`;
 /*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `user_preferences` (
   `id` int(11) NOT NULL,
-  `css_version` varchar(255) DEFAULT '7',
+  `css_version` varchar(255) DEFAULT '7.css',
   `wallpaper` varchar(255) DEFAULT NULL,
   `font` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),

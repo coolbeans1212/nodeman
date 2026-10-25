@@ -34,7 +34,7 @@ Add the following directly below that line:
 Press CTRL+X, then Y to save.  
 Run the following commands:  
 ```
-sudo systemctl reload apache
+sudo systemctl reload apache2
 ```
 ### If you will be hosting other things on the server with Apache2:  
 Run the following commands in the terminal:  
@@ -53,7 +53,7 @@ Press CTRL+X, then Y to save.
 Run the following commands:  
 ```
 sudo a2ensite nodeman
-sudo systemctl reload apache
+sudo systemctl reload apache2
 ```
 ## Set up the database  
 Run the following commands:  
@@ -97,7 +97,7 @@ sudo mariadb nodeman
 ```
 Type the following into the MariaDB shell:  
 ```
-INSERT INTO users (username, hashed_password, admin) VALUES ('user', '$2a$10$yFhT/Va9wHfyIKIgvEHEMOMORw9EtPLsXLZKKmGIna7JOSJ2vzKCG', 1); --(replace "user" with your desired username, and "$2a$10$y..." with the hash you copied from earlier)
+INSERT INTO users (username, password, admin) VALUES ('user', '$2a$10$yFhT/Va9wHfyIKIgvEHEMOMORw9EtPLsXLZKKmGIna7JOSJ2vzKCG', 1); --(replace "user" with your desired username, and "$2a$10$y..." with the hash you copied from earlier)
 ```
 ## Login to your user  
 Open localhost/account/login.php and login with your details. You should be greeted with a nice background image with some icons on the side.  
