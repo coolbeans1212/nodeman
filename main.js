@@ -193,7 +193,7 @@ function progressReset() {
     progressOk.classList.add("hidden");
     progressWindow.classList.remove("hidden");
     progressbar.classList.add("marquee");
-    progressbar.classList.remove("error");
+    progressbar.classList.remove("error", "paused");
 }
 function progressFailure(error = "Awaiting data.") {
     if (Error.isError(error)) {
