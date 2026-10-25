@@ -134,6 +134,9 @@ function utilityUploadFile() {
             const dateString = date.toISOString().replace('T', ' ').split('.')[0];
             const file = fileInput.files[0];
             const table = document.getElementById("utility-file-upload-table");
+            if (table == null) {
+                return;
+            }
             const tableBody = table.getElementsByTagName("tbody")[0];
             const newRow = document.createElement("tr");
             newRow.id = 'utility-file-upload-table-row-' + id;
