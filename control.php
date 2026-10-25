@@ -58,7 +58,7 @@ $fonts = ['Default' => 'var(--default-font)',
                 <span id="layout-versions-per-page-numeral"><?php echo $userPreferences['versions_per_page'] ?? 2;?></span>
             </div>
         </details>
-        <button type="submit">Apply</input>
+        <button type="submit">Apply</button>
     </form>
 </article>
 <script src="/control.js" defer></script>
