@@ -207,3 +207,16 @@ th, td {
     display: flex;
     justify-content: space-between;
 }
+
+.slider-with-label-container {
+    display: flex;
+    margin-top: 2px;
+}
+
+.slider-with-label-container label {
+    min-width: max-content;
+}
+
+.slider-with-label-container input {
+    padding-top: 0;
+}

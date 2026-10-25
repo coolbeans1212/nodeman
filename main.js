@@ -152,6 +152,7 @@ makeTabsWork("projects-tabs");
 makeTabsWork("status-tabs");
 makeTabsWork("version-tabs");
 makeTabsWork("npm-tabs");
+makeTabsWork("control-panel-tabs");
 
 // me when you press the START/STOP/FORCE STOP buttons in startstop.php:
 let statusChangeButtons = document.getElementsByClassName("status-change-button");

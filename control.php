@@ -21,9 +21,10 @@ $fonts = ['Default' => 'var(--default-font)',
 
 <menu role="tablist" aria-label="Control Panel Tabs" id="control-panel-tabs">
     <button role="tab" data-id="Personalisation" aria-controls="personalisation" aria-selected="true">Personalisation</button>
+    <button role="tab" data-id="Layout" aria-controls="layout">Layout</button>
 </menu>
-<article id="personalisation" role="tabpanel" data-id="personalisation">
-    <form action="javascript:submitControlPanelForm('personalisation')">
+<article id="personalisation" role="tabpanel" data-id="personalisation" id="personalisation">
+    <form action="javascript:submitPersonalisationControlPanelForm()">
         <label for="personalisation-wallpaper">Link to wallpaper image:</label>
         <input id="personalisation-wallpaper" type="text" class="full-width" value="<?php echo $userPreferences['wallpaper'] ?: '/files/images/blissnight.webp';?>">
         <label for="personalisation-font">Font:</label>
@@ -47,3 +48,16 @@ $fonts = ['Default' => 'var(--default-font)',
         <button type="submit">Apply</input>
     </form>
 </article>
+<article id="layout" role="tabpanel" data-id="layout" id="layout" hidden>
+    <form action="javascript:submitLayoutControlPanelForm()">
+        <details open>
+            <summary>Version pagination</summary>
+            <div class="slider-with-label-container">
+                <label for="layout-versions-per-page">Versions per page:</label>
+                <input id="layout-versions-per-page" type="range" min="1" max="5" value="<?php echo $userPreferences['versions_per_page'] ?? 2;?>">
+                <span id="layout-versions-per-page-numeral"><?php echo $userPreferences['versions_per_page'] ?? 2;?></span>
+            </div>
+        </details>
+        <button type="submit">Apply</input>
+</article>
+<script src="/control.js" defer></script>

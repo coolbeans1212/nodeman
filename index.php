@@ -4,6 +4,8 @@ require_once __DIR__ . "/forms.php";
 require_once __DIR__ . "/statuscheck.php";
 require_once __DIR__ . "/versions.php";
 require_once __DIR__ . "/userinfo.php";
+require_once __DIR__ . '/account/getUserPreferences.php';
+$userPreferences = getUserPreferences($mysqli);
 
 $sql = 'SELECT * FROM projects';
 $result = $mysqli->query($sql);
@@ -137,7 +139,7 @@ function createTabs($projects) {
                     $i = 0;
                     foreach ($projects as $row) {
                         ?><article role="tabpanel" id="<?php echo str_replace(' ', '-', strtolower($row['name']));?>" <?php if($i != 0) { echo 'hidden'; } ?>>
-                            <?php createDirectoryUploadForm($row['id']); ?><hr><div class="version-pages-container"><?php makeVersionPages($row['id'], 2); ?></div>
+                            <?php createDirectoryUploadForm($row['id']); ?><hr><div class="version-pages-container"><?php makeVersionPages($row['id'], $userPreferences['versions_per_page'] ?? 2); ?></div>
                         </article><?php
                         $i++;
                     }

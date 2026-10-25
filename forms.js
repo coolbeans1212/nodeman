@@ -68,40 +68,6 @@ function createEventListenersForNpmCommandsOnLoad() {
     });
 }
 
-function submitControlPanelForm(type) {
-    const wallpaper = document.getElementById('personalisation-wallpaper').value;
-    const font = document.getElementById('personalisation-font').value;
-    const css = document.getElementById('personalisation-css-version').value;
-    fetch(globalThis.location.origin + "/actions/control.php", {
-        method: "POST",
-        body: JSON.stringify({
-            type: type,
-            wallpaper: wallpaper,
-            font: font,
-            css: css
-        })
-    }).then(async response => {
-        let responseText = await response.text();
-        if (response.ok && !responseText.includes("error")) {
-            failed = false;
-        } else {
-            failed = true;
-            progressReset();
-            progressFailure()
-        }
-        return responseText;
-    }).then(data => {
-        if (failed) {
-            progressFailure(data);
-        } else {
-            reloadCSS();
-        }
-    }).catch(error => {
-        failed = true;
-        progressFailure(error.toString());
-    });
-}
-
 function submitNpmForm(type, id, buttonFrom, dependency = null) {
     progressReset();
     fetch(globalThis.location.origin + "/actions/npm.php", {
