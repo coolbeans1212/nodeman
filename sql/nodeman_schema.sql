@@ -48,6 +48,7 @@ CREATE TABLE `user_preferences` (
   `css_version` varchar(255) DEFAULT '7.css',
   `wallpaper` varchar(255) DEFAULT NULL,
   `font` varchar(255) DEFAULT NULL,
+  `versions_per_page` int(10) unsigned DEFAULT 2,
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_user_preferences_user` FOREIGN KEY (`id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
