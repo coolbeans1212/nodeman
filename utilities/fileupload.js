@@ -13,11 +13,31 @@ document.getElementById('utility-file-upload-require-key').addEventListener('cli
     }
 });
 
-let fileUUID = crypto.randomUUID();
+function generateUUID() {
+    if (crypto.randomUUID) return crypto.randomUUID();
+    return '10000000-1000-4000-8000-100000000000'.replace(/[018]/g, c =>
+        (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16));
+}
+
+function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+        return navigator.clipboard.writeText(text);
+    }
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } finally { ta.remove(); }
+    return Promise.resolve();
+}
+
+let fileUUID = generateUUID();
 
 document.getElementById('utility-file-upload-hidden').addEventListener('change', function () {
     document.getElementById('utility-file-upload-form-part-two').classList.remove('hidden');
-    fileUUID = crypto.randomUUID();
+    fileUUID = generateUUID();
     updateLinkPreview();
 });
 
@@ -137,7 +157,7 @@ function utilityUploadFile() {
                 if (key != '') {
                     secondPart += '&k=' + encodeURIComponent(key);
                 }
-                void navigator.clipboard.writeText(firstPart + secondPart);
+                void copyText(firstPart + secondPart);
             });
 
             const editButtonCell = newRow.insertCell();
