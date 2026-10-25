@@ -14,7 +14,7 @@ if (mysqli_num_rows($result) > 0) {
             <th>Key</th>
             <th>Date Uploaded</th>
             <th>File Size</th>
-            <th>File type</th>
+            <th>File Type</th>
             <th>Access URL</th>
             <th>Actions</th>
         </tr>
@@ -24,11 +24,11 @@ if (mysqli_num_rows($result) > 0) {
     while ($file = mysqli_fetch_assoc($result)) {
         ?>
         <tr id="<?php echo 'utility-file-upload-table-row-' . $file['id']; ?>">
-            <td><?php echo $file['filename']; ?></td>
-            <td><?php echo $file['access_key']; ?></td>
-            <td><?php echo $file['date_created']; ?></td>
-            <td><?php echo $file['filesize']; ?></td>
-            <td><?php echo $file['mime']; ?></td>
+            <td data-field="filename"><?php echo $file['filename']; ?></td>
+            <td data-field="key"><?php echo $file['access_key']; ?></td>
+            <td data-field="date-uploaded"><?php echo $file['date_created']; ?></td>
+            <td data-field="filesize"><?php echo $file['filesize']; ?></td>
+            <td data-field="filetype"><?php echo $file['mime']; ?></td>
             <?php
             if (isset($_SERVER['HTTPS']) &&
                 ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1) ||
@@ -44,8 +44,8 @@ if (mysqli_num_rows($result) > 0) {
                 $accessUrl .= '&k=' . urlencode($file['access_key']);
             }
             ?>
-            <td><button class="thin-button" onclick="navigator.clipboard.writeText('<?php echo $accessUrl;?>')">Click to copy</button></td>
-            <td><button class="thin-button utility-file-upload-edit-button" data-id="<?php echo $file['id']?>" data-key-required="<?php echo $file['key_required'] ? '1' : '0'; ?>" data-key="<?php echo $file['access_key'];?>">Edit</button></td>
+            <td data-field="access-url"><button class="thin-button" onclick="navigator.clipboard.writeText('<?php echo $accessUrl;?>')">Click to copy</button></td>
+            <td data-field="actions"><button class="thin-button utility-file-upload-edit-button" data-id="<?php echo $file['id']?>" data-key-required="<?php echo $file['key_required'] ? '1' : '0'; ?>" data-key="<?php echo $file['access_key'];?>">Edit</button></td>
         </tr>
         <?php
     }

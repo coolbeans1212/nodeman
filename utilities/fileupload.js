@@ -36,34 +36,39 @@ document.getElementById('utility-file-upload-key').addEventListener('change', fu
     updateLinkPreview();
 });
 
+function spawnEditButtonDialogue(button) {
+    console.log(button.dataset.id);
+    let editDialogue = new DialogueBox('edit-' + button.dataset.id, 'Edit uploaded file', [
+        {element: "form", id: "dialogue-form-" + button.dataset.id},
+        {element: "div", class: "space-between", id: "dialogue-button-container-" + button.dataset.id, inside: "dialogue-form-" + button.dataset.id},
+        {element: "button", id: "dialogue-delete-button-" + button.dataset.id, type: "button", innerhtml: "DELETE", style: "color: red;", inside: "dialogue-button-container-" + button.dataset.id},
+        {element: "button", id: "dialogue-reupload-button-" + button.dataset.id, type: "button", innerhtml: "RE-UPLOAD", inside: "dialogue-button-container-" + button.dataset.id},
+        {element: "hr", inside: "dialogue-form-" + button.dataset.id},
+        {element: "input", type: "file", class: "hidden", id: "dialogue-file-" + button.dataset.id, inside: "dialogue-form-" + button.dataset.id},
+        {element: "input", type: "checkbox", id: "dialogue-checkbox-" + button.dataset.id, inside: "dialogue-form-" + button.dataset.id},
+        {element: "label", for: "dialogue-checkbox-" + button.dataset.id, innerhtml: "Require a key to access", inside: "dialogue-form-" + button.dataset.id},
+        {element: "br", inside: "dialogue-form-" + button.dataset.id},
+        {element: "label", for: "dialogue-text-" + button.dataset.id, innerhtml: "Key: ", inside: "dialogue-form-" + button.dataset.id},
+        {element: "input", type: "text", id: "dialogue-text-" + button.dataset.id, inside: "dialogue-form-" + button.dataset.id},
+        {element: "br", inside: "dialogue-form-" + button.dataset.id},
+        {element: "button", id: "dialogue-update-button-" + button.dataset.id, type: "button", innerhtml: "UPDATE", inside: "dialogue-form-" + button.dataset.id}]);
+    if (button.dataset.keyRequired == '1') {
+        editDialogue.element.querySelector('#dialogue-checkbox-' + button.dataset.id).checked = true;
+    }
+    editDialogue.element.querySelector('#dialogue-text-' + button.dataset.id).value = button.dataset.key;
+    editDialogue.element.querySelector('#dialogue-delete-button-' + button.dataset.id).addEventListener('click', function () {deleteUploadedFile(button.dataset.id); editDialogue.remove();});
+    editDialogue.element.querySelector('#dialogue-update-button-' + button.dataset.id).addEventListener('click', function () {updateUploadedFile(button.dataset.id); editDialogue.remove();});
+    editDialogue.element.querySelector('#dialogue-reupload-button-' + button.dataset.id).addEventListener('click', function () {editDialogue.element.querySelector('#dialogue-file-' + button.dataset.id).click();});
+    editDialogue.element.querySelector('#dialogue-file-' + button.dataset.id).addEventListener('change', function () {reuploadUploadedFile(button.dataset.id); editDialogue.remove();});
+    editDialogue.show();
+}
+
 function addEventListenerToEditButton(button) {
     button.addEventListener('click', function() {
-        console.log(button.dataset.id);
-        let editDialogue = new DialogueBox('edit-' + button.dataset.id, 'Edit uploaded file', [
-            {element: "form", id: "dialogue-form-" + button.dataset.id},
-            {element: "div", class: "space-between", id: "dialogue-button-container-" + button.dataset.id, inside: "dialogue-form-" + button.dataset.id},
-            {element: "button", id: "dialogue-delete-button-" + button.dataset.id, type: "button", innerhtml: "DELETE", style: "color: red;", inside: "dialogue-button-container-" + button.dataset.id},
-            {element: "button", id: "dialogue-reupload-button-" + button.dataset.id, type: "button", innerhtml: "RE-UPLOAD", inside: "dialogue-button-container-" + button.dataset.id},
-            {element: "hr", inside: "dialogue-form-" + button.dataset.id},
-            {element: "input", type: "file", class: "hidden", id: "dialogue-file-" + button.dataset.id, inside: "dialogue-form-" + button.dataset.id},
-            {element: "input", type: "checkbox", id: "dialogue-checkbox-" + button.dataset.id, inside: "dialogue-form-" + button.dataset.id},
-            {element: "label", for: "dialogue-checkbox-" + button.dataset.id, innerhtml: "Require a key to access", inside: "dialogue-form-" + button.dataset.id},
-            {element: "br", inside: "dialogue-form-" + button.dataset.id},
-            {element: "label", for: "dialogue-text-" + button.dataset.id, innerhtml: "Key: ", inside: "dialogue-form-" + button.dataset.id},
-            {element: "input", type: "text", id: "dialogue-text-" + button.dataset.id, inside: "dialogue-form-" + button.dataset.id},
-            {element: "br", inside: "dialogue-form-" + button.dataset.id},
-            {element: "button", id: "dialogue-update-button-" + button.dataset.id, type: "button", innerhtml: "UPDATE", inside: "dialogue-form-" + button.dataset.id}]);
-        if (button.dataset.keyRequired == '1') {
-            editDialogue.element.querySelector('#dialogue-checkbox-' + button.dataset.id).checked = true;
-        }
-        editDialogue.element.querySelector('#dialogue-text-' + button.dataset.id).value = button.dataset.key;
-        editDialogue.element.querySelector('#dialogue-delete-button-' + button.dataset.id).addEventListener('click', function () {deleteUploadedFile(button.dataset.id); editDialogue.remove();});
-        editDialogue.element.querySelector('#dialogue-update-button-' + button.dataset.id).addEventListener('click', function () {updateUploadedFile(button.dataset.id); editDialogue.remove();});
-        editDialogue.element.querySelector('#dialogue-reupload-button-' + button.dataset.id).addEventListener('click', function () {editDialogue.element.querySelector('#dialogue-file-' + button.dataset.id).click();});
-        editDialogue.element.querySelector('#dialogue-file-' + button.dataset.id).addEventListener('change', function () {reuploadUploadedFile(button.dataset.id); editDialogue.remove();});
-        editDialogue.show();
+        spawnEditButtonDialogue(button);
     });
 }
+
 
 Array.from(document.getElementsByClassName('utility-file-upload-edit-button')).forEach(function (button) {
     addEventListenerToEditButton(button);
@@ -112,11 +117,12 @@ function utilityUploadFile() {
             const tableBody = table.getElementsByTagName("tbody")[0];
             const newRow = document.createElement("tr");
             newRow.id = 'utility-file-upload-table-row-' + id;
-            const rowValues = [file.name, key ?? '', dateString, file.size, file.type];
-            rowValues.forEach(function (value) {
+            const rowValues = {'filename': file.name, 'key': key ?? '', 'date-uploaded': dateString, 'filesize': file.size, 'filetype': file.type};
+            for (const [key, value] of Object.entries(rowValues)) {
                 const cell = newRow.insertCell();
                 cell.innerHTML = value;
-            });
+                cell.dataset.field = key;
+            }
             tableBody.insertBefore(newRow, tableBody.firstChild);
 
             const copyUrlButtonCell = newRow.insertCell();
@@ -124,6 +130,7 @@ function utilityUploadFile() {
             copyUrlButton.classList.add("thin-button");
             copyUrlButton.textContent = "Click to copy";
             copyUrlButtonCell.appendChild(copyUrlButton);
+            copyUrlButtonCell.dataset.field = 'access-url';
             copyUrlButton.addEventListener('click', function () {
                 const firstPart = window.location.protocol + '//' + window.location.hostname + '/utilities/retrieveFile.php';
                 let secondPart = '?i=' + encodeURIComponent(id);
@@ -138,6 +145,7 @@ function utilityUploadFile() {
             editButton.classList.add("thin-button");
             editButton.textContent = "Edit";
             editButtonCell.appendChild(editButton);
+            editButtonCell.dataset.field = 'actions';
             editButton.dataset.id = id;
             if (requireKey) {
                 editButton.dataset.keyRequired = 1;
@@ -177,7 +185,6 @@ function deleteUploadedFile(id) {
         if (failed) {
             progressFailure(data);
         } else {
-            console.log('utility-file-upload-table-row-' + id);
             const row = document.getElementById('utility-file-upload-table-row-' + id);
             row.remove();
         }
@@ -209,7 +216,7 @@ function updateUploadedFile(id) {
         console.log(response.ok);
         if (response.ok && !responseText.includes("error")) {
             failed = false;
-            progressSuccess(true);
+            progressSuccess();
         } else {
             failed = true;
             progressFailure();
@@ -218,6 +225,17 @@ function updateUploadedFile(id) {
     }).then(data => {
         if (failed) {
             progressFailure(data);
+        } else {
+            const row = document.getElementById('utility-file-upload-table-row-' + id);
+            const keyField = row.querySelector('[data-field="key"]');
+            keyField.textContent = key;
+            const editButton = row.querySelector('[data-field="actions"]').children[0];
+            if (requireKey) {
+                editButton.dataset.keyRequired = 1;
+            } else {
+                editButton.dataset.keyRequired = 0;
+            }
+            editButton.dataset.key = key;
         }
     }).catch(error => {
         failed = true;
