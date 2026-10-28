@@ -10,9 +10,15 @@ require_once __DIR__ . "/../isAdminAndParseEnv.php";
         </div>
     </div>
     <div class="window-body has-space">
-        <div class="shortcut" id="file-upload-shortcut">
-            <img src="/files/images/fileupload.png" alt="A hard drive with a server in the background" class="icon">
-            Upload files
+        <div class="shortcut-grid">
+            <div class="shortcut" id="file-upload-shortcut">
+                <img src="/files/images/fileupload.png" alt="A hard drive with a server in the background" class="icon">
+                Upload files
+            </div>
+            <div class="shortcut" id="event-viewer-shortcut">
+                <img src="/files/images/eventviewer.png" alt="A notebook with warning and error icons" class="icon">
+                Event viewer
+            </div>
         </div>
     </div>
 </div>
@@ -51,3 +57,18 @@ require_once __DIR__ . "/../isAdminAndParseEnv.php";
     </div>
 </div>
 <script src="/utilities/fileupload.js"></script>
+
+
+<div class="window glass active hidden" id="event-viewer" style="top: 10px; left: 10px;">
+    <div class="title-bar">
+        <div class="title-bar-text">Event viewer</div>
+        <div class="title-bar-controls">
+            <button aria-label="Close"></button>
+        </div>
+    </div>
+    <div class="window-body has-space">
+        <article class="no-tabs">
+
+        </article>
+    </div>
+</div>

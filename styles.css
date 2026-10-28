@@ -220,3 +220,8 @@ th, td {
 .slider-with-label-container input {
     padding-top: 0;
 }
+
+.shortcut-grid {
+    display: grid;
+    grid: auto-flow / 1fr 1fr 1fr 1fr 1fr 1fr;
+}
