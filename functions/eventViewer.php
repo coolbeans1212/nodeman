@@ -27,6 +27,8 @@ function getEvents(mysqli $mysqli, string $currentDatetime, string $orderBy = 'd
 }
 
 function displayEventsTable(mysqli $mysqli, string $currentDatetime, string $orderBy = 'datetime', int $numberPerPage = 10, int $pageNumber = 0) {
+    require_once __DIR__ . '/account.php';
+    $userCache = [];
     $events = getEvents($mysqli, $currentDatetime, $orderBy, $numberPerPage, $pageNumber);
     ?>
     <div class="table-container">
@@ -54,7 +56,12 @@ function displayEventsTable(mysqli $mysqli, string $currentDatetime, string $ord
                 }
                 ?></td>
                 <td><?php echo $event['datetime'];?></td>
-                <td><?php echo $event['user_id'];?></td>
+                <td><?php
+                if (!isset($userCache[$event['user_id']])) {
+                    $userCache[$event['user_id']] = getUserInfoFromId($mysqli, $event['user_id']);
+                }
+                echo $userCache[$event['user_id']]['username']; // ffs
+                ?></td>
                 <td><?php echo $event['type'];?></td>
                 <td><?php echo $event['details'];?></td></tr><?php
             }
