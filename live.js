@@ -69,3 +69,30 @@ function reloadCSS() {
     const href = "/customisablestyles.css.php?i=" + Date.now();
     document.getElementById('stylesheet').setAttribute('href', href);
 }
+
+// event viewer
+function fetchEventsAndPutInEventViewer() {
+    npmHasLoaded = true;
+    fetch(globalThis.location.origin + "/utilities/eventviewer/windowinner.php", {
+        method: "GET",
+    }).then(async response => {
+        let responseText = await response.text();
+        return responseText;
+    }).then(data => {
+        document.getElementById("event-viewer-article").innerHTML = data;
+        // if (npmHasLoaded) {
+        //     createEventListenersForNpmCommandsOnLoad(); // in forms.js
+        // }
+    }).catch(error => {
+        console.log(error.toString());
+    });
+}
+let eventsLoaded = false;
+let eventViewerWindow = document.getElementById('event-viewer');
+let isEventViewerVisibleObserver = new MutationObserver(function() {
+    if (!eventViewerWindow.classList.contains("hidden") && !eventsLoaded) {
+        fetchEventsAndPutInEventViewer();
+        eventsLoaded = true;
+    }
+});
+isEventViewerVisibleObserver.observe(eventViewerWindow, {attributes: true, attributeFilter: ["class"]});

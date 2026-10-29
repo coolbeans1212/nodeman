@@ -67,8 +67,8 @@ require_once __DIR__ . "/../isAdminAndParseEnv.php";
         </div>
     </div>
     <div class="window-body has-space">
-        <article class="no-tabs">
-
+        <article class="no-tabs" id="event-viewer-article">
+            Loading...
         </article>
     </div>
 </div>
