@@ -189,11 +189,6 @@ table {
     table-layout: auto;
 }
 
-th, td {
-    max-width: 500px;
-    width: 50px;
-}
-
 .thin-button {
     height: 20px;
     min-height: unset;

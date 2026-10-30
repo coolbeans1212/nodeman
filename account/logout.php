@@ -13,6 +13,6 @@ if (isset($_SESSION["user_id"])) {
 } else {
     die();
 }
-logEvent($mysqli, $_SESSION['user_id'], 'info', 'logout', sprintf('User %1$s logged out manually.', $username ?? 'unknown'));
+logEvent($mysqli, $_SESSION['user_id'], 'info', 'account.logout', sprintf('User %1$s logged out manually.', $username ?? 'unknown'));
 session_destroy();
 header('Location: /');

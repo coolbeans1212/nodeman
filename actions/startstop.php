@@ -26,6 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (isset(checkStatus($projectName)[1])) {
                 $pid = checkStatus($projectName)[1]; //2nd entry of ps aux
                 stopProcess((int)$pid);
+                logEvent($mysqli, $_SESSION['user_id'], 'info', 'project.status.stop', sprintf('The project %1$s with PID %2$s was stopped manually.', $projectName, $pid));
             } else {
                 http_response_code(409);
                 die("Project already stopped or cannot find PID.");
@@ -35,6 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (isset(checkStatus($projectName)[1])) {
                 $pid = checkStatus($projectName)[1];
                 stopProcess((int)$pid, true);
+                logEvent($mysqli, $_SESSION['user_id'], 'info', 'project.status.forcestop', sprintf('The project %1$s with PID %2$s was forcefully stopped manually.', $projectName, $pid));
             } else {
                 http_response_code(409);
                 die("Project already stopped or cannot find PID.");
@@ -48,6 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $result = $stmt->get_result();
             $projectDeets = $result->fetch_assoc();
             startProject($projectName, $projectDeets['location'] . $projectDeets['current_version'] . DIRECTORY_SEPARATOR, $projectDeets['main_file'], $env);
+            logEvent($mysqli, $_SESSION['user_id'], 'info', 'project.status.start', sprintf('The project %s was started.', $projectName));
             break;
         default:
             error("No action was provided.");

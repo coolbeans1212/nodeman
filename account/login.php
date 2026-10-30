@@ -23,13 +23,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if ($user && password_verify($_POST["password"], $user["password"])) {
         session_regenerate_id(true);
         $_SESSION["user_id"] = $user["id"];
-        logEvent($mysqli, $user['id'], 'info', 'logon', sprintf("User %s logged on successfully.", $_POST['username']));
+        logEvent($mysqli, $user['id'], 'info', 'account.logon', sprintf("User %s logged on successfully.", $_POST['username']));
         header("Location: /");
         die();
     } elseif ($user) {
-        logEvent($mysqli, $user['id'], 'warning', 'logon', sprintf("There was an unsuccessful logon attempt for %s.", $_POST['username']));
+        logEvent($mysqli, $user['id'], 'warning', 'account.logon', sprintf("There was an unsuccessful logon attempt for %s.", $_POST['username']));
     } else {
-        logEvent($mysqli, null, 'warning', 'logon', sprintf("There was an unsuccessful logon attempt for non-existant user %s.", $_POST['username'] ?? 'unknown'));
+        logEvent($mysqli, null, 'warning', 'account.logon', sprintf("There was an unsuccessful logon attempt for non-existant user %s.", $_POST['username'] ?? 'unknown'));
     }
 }
 ?>
