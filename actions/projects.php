@@ -29,7 +29,7 @@ if ($payload['id'] == -1) { // id of -1 == new proj
     if (!$stmt->execute()) {
         sqlError($mysqli->error);
     }
-    logEvent($mysqli, $_SESSION["user_id"], 'info', 'project-create', sprintf('New project %1$s was created at %2$s', $payload['name'], $payload['location']));
+    logEvent($mysqli, $_SESSION["user_id"], 'info', 'project.config.create', sprintf('New project %1$s was created at %2$s', $payload['name'], $payload['location']));
 } else {
     if ($payload['delete'] === true) { //gulp,,,,
         $project = getProjectInfo($mysqli, $payload['id']);
@@ -52,7 +52,7 @@ if ($payload['id'] == -1) { // id of -1 == new proj
         if (!$stmt->execute()) {
             sqlError($mysqli->error);
         }
-        logEvent($mysqli, $_SESSION["user_id"], 'info', 'project-delete', sprintf('Project %1$s was deleted', $project['name']));
+        logEvent($mysqli, $_SESSION["user_id"], 'info', 'project.config.delete', sprintf('Project %s was deleted', $project['name']));
     } else {
         $project = getProjectInfo($mysqli, $payload['id']);
         $sql = 'UPDATE projects SET name = ?, location = ?, main_file = ? WHERE id = ?';
@@ -64,7 +64,7 @@ if ($payload['id'] == -1) { // id of -1 == new proj
         if (!$stmt->execute()) {
             sqlError($mysqli->error);
         }
-        logEvent($mysqli, $_SESSION["user_id"], 'info', 'project-update', sprintf('Project %1$s was updated. Previous: name = %2$s, location = %3$s, main_file = %4$s. Now: name = %5$s, location = %6$s, main_file = %7$s',
+        logEvent($mysqli, $_SESSION["user_id"], 'info', 'project.config.update', sprintf('Project %1$s was updated. Previous: name = %2$s, location = %3$s, main_file = %4$s. Now: name = %5$s, location = %6$s, main_file = %7$s',
         $payload['name'], $project['name'], $project['location'], $project['main_file'], $payload['name'], $payload['location'], $payload['main_file']));
     }
 }
