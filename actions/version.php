@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../functions/eventViewer.php';
+
 mysqli_report(MYSQLI_REPORT_OFF); // revert to pre-php 8.1 behaviour :)
 
 function sqlError($error) {
@@ -6,7 +8,7 @@ function sqlError($error) {
     die('SQL ERROR: ' . $error);
 }
 
-function moreHelpfulMkdirError($error) {
+function moreHelpfulMkdirError($error, $location = '') {
     $error = match ($error) {
         'mkdir(): File exists' => $error . '. Make sure that there are no other versions for this project with the same name and changelog.',
         'mkdir(): Permission denied' => $error . '. Make sure that ' . posix_getpwuid(posix_geteuid())['name'] . ' owns ' . $location . ' and has full permissions.',
@@ -25,16 +27,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         sqlError($mysqli->error);
     }
 
-    // we need to save the files now... get where we want the files to be saved :3
-    $sql = "SELECT location FROM projects WHERE id = ?";
+    // we need to save the files now... get where we want the files to be saved :3 (and also project name for the log)
+    $sql = "SELECT location, name FROM projects WHERE id = ?";
     $stmt = $mysqli->prepare($sql);
     $stmt->bind_param('i', $_POST['id']);
     if (!$stmt->execute()) {
         sqlError($mysqli->error);
     }
     $result = $stmt->get_result();
-    $location = $result->fetch_assoc();
-    $location = $location['location']; // location location location ah (https://en.wikipedia.org/wiki/Location%2C_Location%2C_Location)
+    $result = $result->fetch_assoc();
+    $location = $result['location']; // location location location ah (https://en.wikipedia.org/wiki/Location%2C_Location%2C_Location)
+    $projectName = $result['name'];
 
     $sql = "SELECT id FROM versions WHERE name = ? AND changelog = ? AND project_id = ?";
     $stmt = $mysqli->prepare($sql);
@@ -50,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
     // now we have location. we must SAVE to the location.
     if (!mkdir($fulllocation, 0777, true)) {
-        $error = moreHelpfulMkdirError(error_get_last()["message"]);
+        $error = moreHelpfulMkdirError(error_get_last()["message"], $location);
         http_response_code(500);
         die($error);
     }
@@ -59,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (dirname($path) != '' && dirname($path) != '.') { // we need to create another directory inside the one we just created
             $dir = dirname($fulllocation . DIRECTORY_SEPARATOR . $path);
             if (!is_dir($dir) && !mkdir($dir, 0777, true)) {
-                $error = moreHelpfulMkdirError(error_get_last()["message"]);
+                $error = moreHelpfulMkdirError(error_get_last()["message"], $location);
                 http_response_code(500);
                 die($error);
             }
@@ -73,6 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             die('Could not move the uploaded file into the specified directory');
         }
     }
+    logEvent($mysqli, $_SESSION['user_id'], 'info', 'project.version.create', sprintf('New version %1$s was created for project %2$s.', $_POST['ver_name'], $projectName));
 
     // ok NOW we need to set it to the current version in le database
     if ($_POST['stop_and_restart'] === 'true' || $_POST['set_to_current_version'] === 'true') {
@@ -82,12 +86,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (!$stmt->execute()) {
             sqlError($mysqli->error);
         }
+        logEvent($mysqli, $_SESSION['user_id'], 'info', 'project.version.create.settocurrent', sprintf('New version %1$s was set to the current version for project %2$s.', $_POST['ver_name'], $projectName));
     }
 
     // and NOW we need to start this version
     if ($_POST['stop_and_restart'] == 'true') {
         require_once __DIR__ . "/../startstopfunctions.php";
         stopAndRestartProjectWithId($_POST['id'], $mysqli, $env);
+        logEvent($mysqli, $_SESSION['user_id'], 'info', 'project.version.create.start', sprintf('New version %1$s was started for project %2$s.', $_POST['ver_name'], $projectName));
     }
 
     
