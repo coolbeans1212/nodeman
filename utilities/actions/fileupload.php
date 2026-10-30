@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../../isAdminAndParseEnv.php';
+require_once __DIR__ . '/../../functions/eventViewer.php';
 function sqlError(string $error): void {
     http_response_code(500);
     die('SQL ERROR: ' . $error);
@@ -10,6 +11,15 @@ function dieIfUuidInvalid(string $id): void {
         http_response_code(400);
         die('Invalid UUID.');
     }
+}
+
+function getFileInfoFromId(string $id, mysqli $mysqli): array {
+    $sql = "SELECT id,key_required,access_key,date_created,filename,filesize,mime FROM utility_file_uploads WHERE id = ?";
+    $stmt = $mysqli->prepare($sql);
+    $stmt->bind_param('s', $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    return $result->fetch_assoc();
 }
 
 function getFileExtensionFromId(string $id, mysqli $mysqli): string {
@@ -100,11 +110,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') { // upload a new file
         }
         sqlError($mysqli->error);
     }
+    logEvent($mysqli, $_SESSION['user_id'], 'info', 'utility.fileupload.create', sprintf('New file %s was uploaded.', $_FILES['file']['name']));
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'DELETE') { // delete a file
     $data = json_decode(file_get_contents('php://input'), true);
     dieIfUuidInvalid($data['id']);
+    $fileInfo = getFileInfoFromId($data['id'], $mysqli);
     if (!checkIdAlreadyExists($data['id'], $mysqli)) {
         http_response_code(404);
         die('File with ID does not exist.');
@@ -130,6 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'DELETE') { // delete a file
     }
     $mysqli->commit();
     http_response_code(204);
+    logEvent($mysqli, $_SESSION['user_id'], 'info', 'utility.fileupload.delete', sprintf('File %s was deleted.', $fileInfo['filename']));
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'PATCH') { // update a file's metadata
@@ -146,6 +159,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'PATCH') { // update a file's metadata
     if (!$stmt->execute()) {
         sqlError($mysqli->error);
     }
+    logEvent($mysqli, $_SESSION['user_id'], 'info', 'utility.fileupload.update', sprintf('File %s\'s metadata was changed.', getFileInfoFromId($data['id'], $mysqli)['filename']));
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'PUT') { // update a file's contents
@@ -155,6 +169,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'PUT') { // update a file's contents
         http_response_code(413);
         die('Uploaded data exceeded the server data size limit. Ask the administrator to increase post_max_size in php.ini.');
     }
+    $fileInfo = getFileInfoFromId($data['id'], $mysqli);
     
     dieIfUuidInvalid($data['id']);
     if (!checkIdAlreadyExists($data['id'], $mysqli)) {
@@ -194,5 +209,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'PUT') { // update a file's contents
     $newFile = $env['MISCDATADIR'] . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . $data['id'] . '.' . $newFileExt;
     rename($tempfile, $newFile);
     $mysqli->commit();
+    if ($fileInfo['filename'] == $files['file']['name']) {
+        logEvent($mysqli, $_SESSION['user_id'], 'info', 'utility.fileupload.reupload', sprintf('File %s was re-uploaded.', $files['file']['name']));
+    } else {
+        logEvent($mysqli, $_SESSION['user_id'], 'info', 'utility.fileupload.reupload', sprintf('File %1$s (previously %2$s) was re-uploaded.', $files['file']['name']), $fileInfo['filename']);
+    }
 
 }
