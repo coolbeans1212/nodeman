@@ -10,7 +10,7 @@ function logEvent(mysqli $mysqli, ?int $userId, string $level, string $type, str
     }
 }
 
-function getEvents(mysqli $mysqli, string $currentDatetime, string $orderBy = 'datetime', int $numberPerPage = 10, int $pageNumber = 0) {
+function getEvents(mysqli $mysqli, string $currentDatetime, string $orderBy = 'id', int $numberPerPage = 10, int $pageNumber = 0) {
     $allowedColumnValues = ['id', 'user_id', 'level', 'datetime', 'type', 'details'];
     if (!in_array($orderBy, $allowedColumnValues, true)) {
         return -1;
@@ -26,7 +26,7 @@ function getEvents(mysqli $mysqli, string $currentDatetime, string $orderBy = 'd
     return $result->fetch_all(MYSQLI_ASSOC);
 }
 
-function displayEventsTable(mysqli $mysqli, string $currentDatetime, string $orderBy = 'datetime', int $numberPerPage = 10, int $pageNumber = 0) {
+function displayEventsTable(mysqli $mysqli, string $currentDatetime, string $orderBy = 'id', int $numberPerPage = 10, int $pageNumber = 0) {
     require_once __DIR__ . '/account.php';
     $userCache = [];
     $events = getEvents($mysqli, $currentDatetime, $orderBy, $numberPerPage, $pageNumber);
