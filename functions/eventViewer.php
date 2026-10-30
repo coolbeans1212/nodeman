@@ -32,7 +32,7 @@ function getNumberOfEvents(mysqli $mysqli): int {
     return $result->fetch_assoc()["COUNT(*)"];
 }
 
-function displayEventsTable(mysqli $mysqli, string $currentDatetime, string $orderBy = 'id', int $numberPerPage = 10, int $pageNumber = 0) {
+function displayEventsTable(mysqli $mysqli, string $currentDatetime, int $pageNumber = 0, string $orderBy = 'id', int $numberPerPage = 10) {
     require_once __DIR__ . '/account.php';
     $userCache = [];
     $events = getEvents($mysqli, $currentDatetime, $orderBy, $numberPerPage, $pageNumber);
@@ -74,8 +74,17 @@ function displayEventsTable(mysqli $mysqli, string $currentDatetime, string $ord
             ?>
             </tbody>
         </table>
-        <sup>Showing <?php echo $pageNumber*$numberPerPage; ?> to <?php echo min($pageNumber*$numberPerPage + $numberPerPage, getNumberOfEvents($mysqli)); ?> of <?php echo getNumberOfEvents($mysqli); ?> events.</sup>
     </div>
+    <?php
+    $count = getNumberOfEvents($mysqli);
+    ?>
+    <sup>Showing <?php echo $pageNumber*$numberPerPage + 1; ?> to <?php echo min($pageNumber*$numberPerPage + $numberPerPage, $count); ?> of <?php echo $count; ?> events.</sup>
+    <div class="page-selector-wrapper"><?php
+    $numberPagesNeeded = ceil($count / $numberPerPage);
+    for ($i = 0; $i < $numberPagesNeeded; $i++) {
+        ?><div class="<?php if ($i == $pageNumber) { echo 'selected-'; }?>page-selector" data-type="page-selector-eventviewer" data-id="<?php echo $i;?>" id="selector-eventviewer-<?php echo $i; ?>"><?php echo $i;?></div><?php
+    }
+    ?></div>
     <?php
 }
 

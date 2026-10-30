@@ -72,3 +72,4 @@ require_once __DIR__ . "/../isAdminAndParseEnv.php";
         </article>
     </div>
 </div>
+<script src="/utilities/eventviewer/eventviewer.js"></script>

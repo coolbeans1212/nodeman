@@ -256,7 +256,7 @@ Array.from(clickyThingies).forEach((clickyThingy) => clickyThingy.addEventListen
 }));
 
 // version pages or something idek
-let versionPageSelectors = document.querySelectorAll('.page-selector,.selected-page-selector');
+let versionPageSelectors = document.querySelectorAll('[data-type="page-selector-versions"]');
 Array.from(versionPageSelectors).forEach((pageSelector) => pageSelector.addEventListener('click', function () {
     let pageSelectorId = pageSelector.id;
     let currentPageSelectors = document.getElementsByClassName("selected-page-selector");

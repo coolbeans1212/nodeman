@@ -70,7 +70,7 @@ function makeVersionPages($projectId, $boxesPerPage = 1) {
     } // apparently they way i use the id attribute sucks but the guys on Slack won't tell me why :(
     ?><div class="page-selector-wrapper"><?php
     for ($i = 0; $i < $numberPagesNeeded; $i++) {
-        ?><div class="<?php if ($i == 0) { echo 'selected-'; }?>page-selector" id="selector-proj<?php echo $projectId;?>-<?php echo $i; ?>"><?php echo $i;?></div><?php
+        ?><div class="<?php if ($i == 0) { echo 'selected-'; }?>page-selector" data-type="page-selector-versions" id="selector-proj<?php echo $projectId;?>-<?php echo $i; ?>"><?php echo $i;?></div><?php
     }
     ?></div><?php
 }
