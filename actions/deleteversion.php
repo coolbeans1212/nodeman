@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $location = $location['location'];
         $dir = $location . DIRECTORY_SEPARATOR . $payload['id']; // surely nothing can go wrong with this (foreshadowing)
         rmdirRecursive($dir);
-        logEvent($mysqli, $_SESSION['user_id'], 'info', 'project.version.files.delete', sprintf('The files from version %1$s of project %2$s was deleted.', $version['name'], $project['name']));
+        logEvent($mysqli, $_SESSION['user_id'], 'info', 'project.version.files.delete', sprintf('The files from version %1$s of project %2$s were deleted.', $version['name'], $project['name']));
     }
     $sql = "DELETE FROM versions WHERE id = ?"; // 😔 goodbye version
     $stmt = $mysqli->prepare($sql);
