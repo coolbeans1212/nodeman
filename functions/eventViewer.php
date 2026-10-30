@@ -26,6 +26,12 @@ function getEvents(mysqli $mysqli, string $currentDatetime, string $orderBy = 'i
     return $result->fetch_all(MYSQLI_ASSOC);
 }
 
+function getNumberOfEvents(mysqli $mysqli): int {
+    $sql = "SELECT COUNT(*) FROM events";
+    $result = $mysqli->query($sql);
+    return $result->fetch_assoc()["COUNT(*)"];
+}
+
 function displayEventsTable(mysqli $mysqli, string $currentDatetime, string $orderBy = 'id', int $numberPerPage = 10, int $pageNumber = 0) {
     require_once __DIR__ . '/account.php';
     $userCache = [];
@@ -68,6 +74,7 @@ function displayEventsTable(mysqli $mysqli, string $currentDatetime, string $ord
             ?>
             </tbody>
         </table>
+        <sup>Showing <?php echo $pageNumber*$numberPerPage; ?> to <?php echo min($pageNumber*$numberPerPage + $numberPerPage, getNumberOfEvents($mysqli)); ?> of <?php echo getNumberOfEvents($mysqli); ?> events.</sup>
     </div>
     <?php
 }
