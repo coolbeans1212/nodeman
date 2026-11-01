@@ -10,9 +10,17 @@ function logEvent(mysqli $mysqli, ?int $userId, string $level, string $type, str
     }
 }
 
-function getEvents(mysqli $mysqli, string $currentDatetime, string $orderBy = 'id', int $numberPerPage = 10, int $pageNumber = 0, bool $ascending = false) {
+function isEventsColumnValueAllowed(string $column) {
     $allowedColumnValues = ['id', 'user_id', 'level', 'datetime', 'type', 'details'];
-    if (!in_array($orderBy, $allowedColumnValues, true)) {
+    if (!in_array($column, $allowedColumnValues, true)) {
+        return 0;
+    } else {
+        return 1;
+    }
+}
+
+function getEvents(mysqli $mysqli, string $currentDatetime, string $orderBy = 'id', int $numberPerPage = 10, int $pageNumber = 0, bool $ascending = false, array $search = [false, '', '']) {
+    if (!isEventsColumnValueAllowed($orderBy)) {
         return -1;
     }
     if ($ascending) {
@@ -20,10 +28,21 @@ function getEvents(mysqli $mysqli, string $currentDatetime, string $orderBy = 'i
     } else {
         $direction = 'DESC';
     }
-    $sql = "SELECT * FROM events WHERE datetime < ? ORDER BY {$orderBy} {$direction} LIMIT ? OFFSET ?";
-    $stmt = $mysqli->prepare($sql);
-    $offset = $pageNumber * $numberPerPage;
-    $stmt->bind_param('sii', $currentDatetime, $numberPerPage, $offset);
+    if (!$search[0]) {
+        $sql = "SELECT * FROM events WHERE datetime < ? ORDER BY {$orderBy} {$direction} LIMIT ? OFFSET ?";
+        $stmt = $mysqli->prepare($sql);
+        $offset = $pageNumber * $numberPerPage;
+        $stmt->bind_param('sii', $currentDatetime, $numberPerPage, $offset);
+    } else {
+        if (!isEventsColumnValueAllowed($search[2])) {
+            return -1;
+        }
+        $searchTerm = '%' . $search[1] . '%';
+        $sql = "SELECT * FROM events WHERE datetime < ? AND {$search[2]} LIKE ? ORDER BY {$orderBy} {$direction} LIMIT ? OFFSET ?";
+        $stmt = $mysqli->prepare($sql);
+        $offset = $pageNumber * $numberPerPage;
+        $stmt->bind_param('ssii', $currentDatetime, $searchTerm, $numberPerPage, $offset);
+    }
     if (!$stmt->execute()) {
         error_log('Could not get events: ' . $stmt->error, 0);
     }
@@ -31,9 +50,25 @@ function getEvents(mysqli $mysqli, string $currentDatetime, string $orderBy = 'i
     return $result->fetch_all(MYSQLI_ASSOC);
 }
 
-function getNumberOfEvents(mysqli $mysqli): int {
-    $sql = "SELECT COUNT(*) FROM events";
-    $result = $mysqli->query($sql);
+function getNumberOfEvents(mysqli $mysqli, string $currentDatetime, array $search): int {
+    if (!$search[0]) {
+        $sql = "SELECT COUNT(*) FROM events WHERE datetime < ?";
+        $stmt = $mysqli->prepare($sql);
+        $stmt->bind_param('s', $currentDatetime);
+    } else {
+        if (!isEventsColumnValueAllowed($search[2])) {
+            var_dump($search[2]);
+            return -1;
+        }
+        $searchTerm = '%' . $search[1] . '%';
+        $sql = "SELECT COUNT(*) FROM events WHERE datetime < ? AND {$search[2]} LIKE ?";
+        $stmt = $mysqli->prepare($sql);
+        $stmt->bind_param('ss', $currentDatetime, $searchTerm);
+    }
+    if (!$stmt->execute()) {
+        error_log('Could not get events: ' . $stmt->error, 0);
+    }
+    $result = $stmt->get_result();
     return $result->fetch_assoc()["COUNT(*)"];
 }
 
@@ -46,10 +81,10 @@ function eventLevelToImage($level): string {
     };
 }
 
-function displayEventsTable(mysqli $mysqli, string $currentDatetime, int $pageNumber = 0, string $orderBy = 'id', int $numberPerPage = 10, bool $ascending = false) {
+function displayEventsTable(mysqli $mysqli, string $currentDatetime, int $pageNumber = 0, string $orderBy = 'id', int $numberPerPage = 10, bool $ascending = false, array $search = [false, '', '']) {
     require_once __DIR__ . '/account.php';
     $userCache = [];
-    $events = getEvents($mysqli, $currentDatetime, $orderBy, $numberPerPage, $pageNumber, $ascending);
+    $events = getEvents($mysqli, $currentDatetime, $orderBy, $numberPerPage, $pageNumber, $ascending, $search);
     ?>
     <div class="table-container">
         <table>
@@ -92,7 +127,7 @@ function displayEventsTable(mysqli $mysqli, string $currentDatetime, int $pageNu
         </table>
     </div>
     <?php
-    $count = getNumberOfEvents($mysqli);
+    $count = getNumberOfEvents($mysqli, $currentDatetime, $search);
     ?>
     <sup>Showing <?php echo $pageNumber*$numberPerPage + 1; ?> to <?php echo min($pageNumber*$numberPerPage + $numberPerPage, $count); ?> of <?php echo $count; ?> events.</sup>
     <div class="page-selector-wrapper"><?php

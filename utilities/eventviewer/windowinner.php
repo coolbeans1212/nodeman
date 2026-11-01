@@ -9,4 +9,13 @@ if (isset($_GET['ascending']) && $_GET['ascending'] == 'false') {
 } else {
     $ascending = true;
 }
-displayEventsTable(require_once __DIR__ . '/../../db.php', $datetime, $_GET['page'] ?? 0, $_GET['orderby'] ?? 'id', 10, $ascending ?? false);
+
+if (isset($_GET['find']) && $_GET['find'] == 'false') {
+    $find = false;
+} elseif (!isset($_GET['find'])) {
+    $find = false;
+} else {
+    $find = true;
+}
+
+displayEventsTable(require_once __DIR__ . '/../../db.php', $datetime, $_GET['page'] ?? 0, $_GET['orderby'] ?? 'id', 10, $ascending ?? false, [$find, $_GET['texttofind'] ?? '', $_GET['findin'] ?? 'type']);
