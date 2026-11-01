@@ -1,6 +1,9 @@
 let eventViewerPage = 0;
 let eventViewerSort = 'id';
 let eventViewerIsAscending = false;
+let eventViewerFind = false;
+let eventViewerTextToFind = '';
+let eventViewerFindIn = 'type';
 
 function makeEventPagesWork() {
     let eventPageSelectors = document.querySelectorAll('[data-type="page-selector-eventviewer"]');
@@ -12,7 +15,7 @@ function makeEventPagesWork() {
             }
         });
         pageSelector.classList.add("selected-page-selector"); pageSelector.classList.remove("page-selector");
-        fetchEventsAndPutInEventViewer(pageSelector.dataset.id, eventViewerSort, eventViewerIsAscending);
+        fetchEventsAndPutInEventViewer(pageSelector.dataset.id, eventViewerSort, eventViewerIsAscending, eventViewerFind, eventViewerTextToFind, eventViewerFindIn);
         eventViewerPage = pageSelector.dataset.id;
     }));
 }
@@ -22,11 +25,11 @@ function makeSortingWork() {
     Array.from(eventViewerHeaders).forEach(function (header) {
         header.addEventListener('click', function () {
             if (header.classList.contains('indicator') && !header.classList.contains('up')) {
-                fetchEventsAndPutInEventViewer(eventViewerPage, header.dataset.id, true);
+                fetchEventsAndPutInEventViewer(eventViewerPage, header.dataset.id, true, eventViewerFind, eventViewerTextToFind, eventViewerFindIn);
                 eventViewerSort = header.dataset.id;
                 eventViewerIsAscending = true;
             } else {
-                fetchEventsAndPutInEventViewer(eventViewerPage, header.dataset.id);
+                fetchEventsAndPutInEventViewer(eventViewerPage, header.dataset.id, false, eventViewerFind, eventViewerTextToFind, eventViewerFindIn);
                 eventViewerSort = header.dataset.id;
                 eventViewerIsAscending = false;
             }
@@ -57,6 +60,9 @@ function findOnClick() {
         const textToFind = document.getElementById('dialogue-find-event-viewer-text').value;
         const findIn = document.querySelector('input[name="dialogue-find-event-viewer-radio"]:checked').value;
         fetchEventsAndPutInEventViewer(eventViewerPage, eventViewerSort, eventViewerIsAscending, true, textToFind, findIn);
+        eventViewerFind = true;
+        eventViewerTextToFind = textToFind;
+        eventViewerFindIn = findIn;
     });
 }
 
