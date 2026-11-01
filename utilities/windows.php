@@ -66,10 +66,20 @@ require_once __DIR__ . "/../isAdminAndParseEnv.php";
             <button aria-label="Close"></button>
         </div>
     </div>
-    <div class="window-body has-space">
-        <article class="no-tabs" id="event-viewer-article">
-            Loading...
-        </article>
+    <div class="window-body">
+        <ul role="menubar" class="can-hover">
+            <li role="menuitem" tabindex="0" aria-haspopup="true">
+                Edit
+                <ul role="menu">
+                    <li role="menuitem"><a id="event-viewer-menubar-find">Find</a></li>
+                </ul>
+            </li>
+        </ul>
+        <div class="has-space">
+            <article class="no-tabs" id="event-viewer-article">
+                Loading...
+            </article>
+        </div>
     </div>
 </div>
 <script src="/utilities/eventviewer/eventviewer.js"></script>
