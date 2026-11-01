@@ -78,18 +78,21 @@ function uploadErrorHttpStatusCode(int $code): int {
 if ($_SERVER['REQUEST_METHOD'] == 'POST') { // upload a new file
     $fileError = $_FILES['file']['error'] ?? UPLOAD_ERR_NO_FILE;
     if ($fileError !== UPLOAD_ERR_OK) {
+        logEvent($mysqli, $_SESSION['user_id'], 'error', 'utility.fileupload.create', uploadErrorMessage($fileError));
         http_response_code(uploadErrorHttpStatusCode($fileError));
         die(uploadErrorMessage($fileError));
     }
 
     if (!is_dir($env['MISCDATADIR'] . DIRECTORY_SEPARATOR . 'uploads') && !mkdir($env['MISCDATADIR'] . DIRECTORY_SEPARATOR . 'uploads', 0755, true)) {
         http_response_code(500);
+        logEvent($mysqli, $_SESSION['user_id'], 'error', 'utility.fileupload.create', 'Could not create the data directory.');
         die('Could not create the data directory.');
     }
 
     dieIfUuidInvalid($_POST['id']);
     if (checkIdAlreadyExists($_POST['id'], $mysqli)) {
         http_response_code(409);
+        logEvent($mysqli, $_SESSION['user_id'], 'error', 'utility.fileupload.create', 'File with ID already exists.');
         die('File with ID already exists.');
     }
 
@@ -97,6 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') { // upload a new file
     $file = $env['MISCDATADIR'] . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . $_POST['id'] . '.' . $fileExt;
     if (!move_uploaded_file($_FILES['file']['tmp_name'], $file)) {
         http_response_code(500);
+        logEvent($mysqli, $_SESSION['user_id'], 'error', 'utility.fileupload.create', sprintf('Could not save the uploaded file to %s.', $file));
         die('Could not save the uploaded file.');
     }
 
@@ -119,6 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'DELETE') { // delete a file
     $fileInfo = getFileInfoFromId($data['id'], $mysqli);
     if (!checkIdAlreadyExists($data['id'], $mysqli)) {
         http_response_code(404);
+        logEvent($mysqli, $_SESSION['user_id'], 'error', 'utility.fileupload.delete', sprintf("File with ID %s does not exist.", $data['id']));
         die('File with ID does not exist.');
     }
     $fileExt = getFileExtensionFromId($data['id'], $mysqli);
@@ -132,12 +137,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'DELETE') { // delete a file
     if ($fileExt == -1) {
         $mysqli->rollback();
         http_response_code(404);
+        logEvent($mysqli, $_SESSION['user_id'], 'error', 'utility.fileupload.delete', sprintf("Could not find the file with ID %s.", $data['id']));
         die('Could not find the file for deletion.');
     }
     $file = $env['MISCDATADIR'] . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . $data['id'] . '.' . $fileExt;
     if (is_file($file) && !unlink($file)) {
         $mysqli->rollback();
         http_response_code(500);
+        logEvent($mysqli, $_SESSION['user_id'], 'error', 'utility.fileupload.delete', sprintf("Could not delete the file with ID %s.", $data['id']));
         die("Could not delete the file.");
     }
     $mysqli->commit();
@@ -150,6 +157,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'PATCH') { // update a file's metadata
     dieIfUuidInvalid($data['id']);
     if (!checkIdAlreadyExists($data['id'], $mysqli)) {
         http_response_code(404);
+        logEvent($mysqli, $_SESSION['user_id'], 'error', 'utility.fileupload.update', sprintf("File with ID %s does not exist.", $data['id']));
         die('File with ID does not exist.');
     }
     $sql = "UPDATE utility_file_uploads SET key_required = ?, access_key = ? WHERE id = ?";
