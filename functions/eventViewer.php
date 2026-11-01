@@ -37,6 +37,15 @@ function getNumberOfEvents(mysqli $mysqli): int {
     return $result->fetch_assoc()["COUNT(*)"];
 }
 
+function eventLevelToImage($level): string {
+    return match ($level) {
+        'info' => '<img src="/files/images/info.png" alt="Info" width="16px">',
+        'warning' => '<img src="/files/images/warning.png" alt="Warning" width="16px">',
+        'error' => '<img src="/files/images/error.png" alt="Error" width="16px">',
+        default => $level,
+    };
+}
+
 function displayEventsTable(mysqli $mysqli, string $currentDatetime, int $pageNumber = 0, string $orderBy = 'id', int $numberPerPage = 10, bool $ascending = false) {
     require_once __DIR__ . '/account.php';
     $userCache = [];
@@ -46,29 +55,28 @@ function displayEventsTable(mysqli $mysqli, string $currentDatetime, int $pageNu
         <table>
             <thead>
                 <tr>
-                    <th class="event-viewer-header <?php echo $orderBy == 'id' ? 'highlighted indicator ' : ''; echo $ascending ? 'up' : '';?>" data-id="id">ID</th>
-                    <th class="event-viewer-header <?php echo $orderBy == 'level' ? 'highlighted indicator ' : ''; echo $ascending ? 'up' : ''; ?> " data-id="level">LV</th>
-                    <th class="event-viewer-header <?php echo $orderBy == 'datetime' ? 'highlighted indicator ' : ''; echo $ascending ? 'up' : ''; ?>" data-id="datetime">Datetime</th>
-                    <th class="event-viewer-header <?php echo $orderBy == 'user_id' ? 'highlighted indicator ' : ''; echo $ascending ? 'up' : ''; ?>" data-id="user_id">User</th>
-                    <th class="event-viewer-header <?php echo $orderBy == 'type' ? 'highlighted indicator ' : ''; echo $ascending ? 'up' : ''; ?>" data-id="type">Type</th>
-                    <th class="event-viewer-header <?php echo $orderBy == 'details' ? 'highlighted indicator ' : ''; echo $ascending ? 'up' : ''; ?>" data-id="details">Details</th>
+                    <?php
+                    $headers = [['ID', 'id'], ['LV', 'level'], ['Datetime', 'datetime'], ['User', 'user_id'], ['Type', 'type'], ['Details', 'details']];
+                    foreach ($headers as $header) {
+                        ?><th class="event-viewer-header
+                        <?php
+                        if ($orderBy == $header[1]) {
+                            echo ' highlighted indicator';
+                        }
+                        if ($ascending) {
+                            echo ' up';
+                        }
+                        ?>
+                        " data-id="<?php echo $header[1];?>"><?php echo $header[0];?></th><?php
+                    }
+                    ?>
                 </tr>
             </thead>
             <tbody>
             <?php foreach ($events as $event) {
                 ?><tr>
                 <td><?php echo $event['id']; ?></td>
-                <td><?php
-                if ($event['level'] == 'info') {
-                    ?><img src="/files/images/info.png" alt="Info" width="16px"><?php
-                } elseif ($event['level'] == 'warning') {
-                    ?><img src="/files/images/warning.png" alt="Warning" width="16px"><?php
-                } elseif ($event['level'] == 'error') {
-                    ?><img src="/files/images/error.png" alt="Error" width="16px"><?php
-                } else {
-                    echo $event['level'];
-                }
-                ?></td>
+                <td><?php echo eventLevelToImage($event['level']);?></td>
                 <td><?php echo $event['datetime'];?></td>
                 <td><?php
                 if (!isset($userCache[$event['user_id']])) {
