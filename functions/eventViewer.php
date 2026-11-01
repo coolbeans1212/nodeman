@@ -10,12 +10,17 @@ function logEvent(mysqli $mysqli, ?int $userId, string $level, string $type, str
     }
 }
 
-function getEvents(mysqli $mysqli, string $currentDatetime, string $orderBy = 'id', int $numberPerPage = 10, int $pageNumber = 0) {
+function getEvents(mysqli $mysqli, string $currentDatetime, string $orderBy = 'id', int $numberPerPage = 10, int $pageNumber = 0, bool $ascending = false) {
     $allowedColumnValues = ['id', 'user_id', 'level', 'datetime', 'type', 'details'];
     if (!in_array($orderBy, $allowedColumnValues, true)) {
         return -1;
     }
-    $sql = "SELECT * FROM events WHERE datetime < ? ORDER BY {$orderBy} DESC LIMIT ? OFFSET ?";
+    if ($ascending) {
+        $direction = 'ASC';
+    } else {
+        $direction = 'DESC';
+    }
+    $sql = "SELECT * FROM events WHERE datetime < ? ORDER BY {$orderBy} {$direction} LIMIT ? OFFSET ?";
     $stmt = $mysqli->prepare($sql);
     $offset = $pageNumber * $numberPerPage;
     $stmt->bind_param('sii', $currentDatetime, $numberPerPage, $offset);
@@ -32,25 +37,28 @@ function getNumberOfEvents(mysqli $mysqli): int {
     return $result->fetch_assoc()["COUNT(*)"];
 }
 
-function displayEventsTable(mysqli $mysqli, string $currentDatetime, int $pageNumber = 0, string $orderBy = 'id', int $numberPerPage = 10) {
+function displayEventsTable(mysqli $mysqli, string $currentDatetime, int $pageNumber = 0, string $orderBy = 'id', int $numberPerPage = 10, bool $ascending = false) {
     require_once __DIR__ . '/account.php';
     $userCache = [];
-    $events = getEvents($mysqli, $currentDatetime, $orderBy, $numberPerPage, $pageNumber);
+    $events = getEvents($mysqli, $currentDatetime, $orderBy, $numberPerPage, $pageNumber, $ascending);
     ?>
     <div class="table-container">
         <table>
             <thead>
                 <tr>
-                    <th>LV</th>
-                    <th>Datetime</th>
-                    <th>User</th>
-                    <th>Type</th>
-                    <th>Details</th>
+                    <th class="event-viewer-header <?php echo $orderBy == 'id' ? 'highlighted indicator ' : ''; echo $ascending ? 'up' : '';?>" data-id="id">ID</th>
+                    <th class="event-viewer-header <?php echo $orderBy == 'level' ? 'highlighted indicator ' : ''; echo $ascending ? 'up' : ''; ?> " data-id="level">LV</th>
+                    <th class="event-viewer-header <?php echo $orderBy == 'datetime' ? 'highlighted indicator ' : ''; echo $ascending ? 'up' : ''; ?>" data-id="datetime">Datetime</th>
+                    <th class="event-viewer-header <?php echo $orderBy == 'user_id' ? 'highlighted indicator ' : ''; echo $ascending ? 'up' : ''; ?>" data-id="user_id">User</th>
+                    <th class="event-viewer-header <?php echo $orderBy == 'type' ? 'highlighted indicator ' : ''; echo $ascending ? 'up' : ''; ?>" data-id="type">Type</th>
+                    <th class="event-viewer-header <?php echo $orderBy == 'details' ? 'highlighted indicator ' : ''; echo $ascending ? 'up' : ''; ?>" data-id="details">Details</th>
                 </tr>
             </thead>
             <tbody>
             <?php foreach ($events as $event) {
-                ?><tr><td><?php
+                ?><tr>
+                <td><?php echo $event['id']; ?></td>
+                <td><?php
                 if ($event['level'] == 'info') {
                     ?><img src="/files/images/info.png" alt="Info" width="16px"><?php
                 } elseif ($event['level'] == 'warning') {
