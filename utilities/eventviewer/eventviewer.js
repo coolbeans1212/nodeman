@@ -37,6 +37,15 @@ function makeSortingWork() {
     });
 }
 
+function makeStopFilteringLinkWork() {
+    const stopFilteringLink = document.getElementById('event-viewer-stop-filtering');
+    stopFilteringLink.addEventListener('click', function (event) {
+        event.preventDefault();
+        eventViewerFind = false;
+        fetchEventsAndPutInEventViewer();
+    });
+}
+
 function findOnClick() {
     let findDialogue = new DialogueBox('event-viewer-find-dialogue', 'Find...', [
         {element: "form", id: "dialogue-find-event-viewer-form"},
@@ -63,17 +72,17 @@ function findOnClick() {
         eventViewerFind = true;
         eventViewerTextToFind = textToFind;
         eventViewerFindIn = findIn;
+        findDialogue.remove();
     });
 }
 
 function makeMenuBarWork() {
     let find = document.getElementById('event-viewer-menubar-find');
-    console.log(find);
     find.removeEventListener('click', findOnClick);
     find.addEventListener('click', findOnClick);
 }
 
-function fetchEventsAndPutInEventViewer(page = 0, orderBy = 'id', ascending = false, find = false, textToFind = '', findIn = 'type') {
+function fetchEventsAndPutInEventViewer(page = eventViewerPage, orderBy = eventViewerSort, ascending = eventViewerIsAscending, find = eventViewerFind, textToFind = eventViewerTextToFind, findIn = eventViewerFindIn) {
     const url = new URL(globalThis.location.origin + "/utilities/eventviewer/windowinner.php");
     url.search = new URLSearchParams({
         page: page,
@@ -93,6 +102,9 @@ function fetchEventsAndPutInEventViewer(page = 0, orderBy = 'id', ascending = fa
         makeEventPagesWork();
         makeSortingWork();
         makeMenuBarWork();
+        if (find) {
+            makeStopFilteringLinkWork();
+        }
     }).catch(error => {
         console.log(error.toString());
     });

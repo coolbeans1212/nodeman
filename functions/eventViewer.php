@@ -85,6 +85,9 @@ function displayEventsTable(mysqli $mysqli, string $currentDatetime, int $pageNu
     require_once __DIR__ . '/account.php';
     $userCache = [];
     $events = getEvents($mysqli, $currentDatetime, $orderBy, $numberPerPage, $pageNumber, $ascending, $search);
+    if ($search[0]) {
+        ?><sup>Currently filtering: <?php echo $search[2];?> contains <?php echo $search[1]; ?>. <a id="event-viewer-stop-filtering" href="#">Click here to stop filtering.</a></sup><?php
+    }
     ?>
     <div class="table-container">
         <table>
