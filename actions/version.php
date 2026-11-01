@@ -24,6 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt = $mysqli->prepare($sql);
     $stmt->bind_param('ssi', $_POST['ver_name'], $_POST['changelog'], $_POST['id']);
     if (!$stmt->execute()) {
+        logEvent($mysqli, $_SESSION['user_id'], "error", "project.version.create", sprintf("An SQL error occured while trying to create new version %s.", $_POST['ver_name'] ?? 'missing'));
         sqlError($mysqli->error);
     }
 
@@ -32,6 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt = $mysqli->prepare($sql);
     $stmt->bind_param('i', $_POST['id']);
     if (!$stmt->execute()) {
+        logEvent($mysqli, $_SESSION['user_id'], "error", "project.version.create", sprintf("An SQL error occured while trying to select the name and location of project with ID %s", (string)$_POST['id'] ?? 'missing'));
         sqlError($mysqli->error);
     }
     $result = $stmt->get_result();
@@ -43,6 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt = $mysqli->prepare($sql);
     $stmt->bind_param('ssi', $_POST['ver_name'], $_POST['changelog'], $_POST['id']);
     if (!$stmt->execute()) {
+        logEvent($mysqli, $_SESSION['user_id'], "error", "project.version.create", sprintf("An SQL error occured while trying to select the name and location of project with ID %s", (string)$_POST['id'] ?? 'missing'));
         sqlError($stmt->error);
     }
     $result = $stmt->get_result();
@@ -54,6 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // now we have location. we must SAVE to the location.
     if (!mkdir($fulllocation, 0777, true)) {
         $error = moreHelpfulMkdirError(error_get_last()["message"], $location);
+        logEvent($mysqli, $_SESSION['user_id'], "error", "project.version.create", sprintf("Could not make directory %1$s: %2$s", $fulllocation, $error));
         http_response_code(500);
         die($error);
     }
@@ -63,6 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $dir = dirname($fulllocation . DIRECTORY_SEPARATOR . $path);
             if (!is_dir($dir) && !mkdir($dir, 0777, true)) {
                 $error = moreHelpfulMkdirError(error_get_last()["message"], $location);
+                logEvent($mysqli, $_SESSION['user_id'], "error", "project.version.create", sprintf("Could not make directory %1$s: %2$s", $location, $error));
                 http_response_code(500);
                 die($error);
             }
@@ -73,6 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $filename = $_FILES['files']['name'][$key];
         if (!move_uploaded_file($tmpName, $dir . $filename)) {
             http_response_code(500);
+            logEvent($mysqli, $_SESSION['user_id'], "error", "project.version.create", sprintf("Could not move the uploaded file into %s.", $dir));
             die('Could not move the uploaded file into the specified directory');
         }
     }
@@ -84,6 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt = $mysqli->prepare($sql);
         $stmt->bind_param('ii', $locationid, $_POST['id']); // reusing $locationid from the bit where we get the directory to save the files to
         if (!$stmt->execute()) {
+            logEvent($mysqli, $_SESSION['user_id'], "error", "project.version.create", sprintf("An SQL error occured while trying to update the current version of project %s.", $projectName));
             sqlError($mysqli->error);
         }
         logEvent($mysqli, $_SESSION['user_id'], 'info', 'project.version.create.settocurrent', sprintf('New version %1$s was set to the current version for project %2$s.', $_POST['ver_name'], $projectName));

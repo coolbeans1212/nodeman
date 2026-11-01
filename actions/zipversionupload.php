@@ -1,7 +1,8 @@
 <?php
 require_once __DIR__ . '/../isAdminAndParseEnv.php';
+require_once __DIR__ . '/../functions/eventViewer.php';
 
-function compress_version(int $id) { // returns an array with keys error, error_message, archive (archive is the location of the compressed archive file)
+function compressVersion(int $id) { // returns an array with keys error, error_message, archive (archive is the location of the compressed archive file)
     global $mysqli;
     $sql = "SELECT location FROM projects WHERE id = (SELECT project_id FROM versions WHERE id = ?)";
     $stmt = $mysqli->prepare($sql);
@@ -12,14 +13,17 @@ function compress_version(int $id) { // returns an array with keys error, error_
     $location = $location . DIRECTORY_SEPARATOR . $id;
     $archivedirectory = "/tmp/NODEMAN/";
     if (!is_dir($archivedirectory) && !mkdir($archivedirectory, 0777, true)) {
+        logEvent($mysqli, $_SESSION['user_id'], 'error', 'project.version.download', 'Could not create the temporary directory where the ZIP archive is to be created.');
         return ["error"=>1, "error_message"=>"Could not create the temporary directory where the ZIP archive is to be created."];
     }
     $archivelocation = $archivedirectory . $id . ".zip";
     if (file_exists($archivelocation) && !unlink($archivelocation)) {
+        logEvent($mysqli, $_SESSION['user_id'], 'error', 'project.version.download', 'Could not remove already existing ZIP archive.');
         return ["error"=>1, "error_message"=>"Could not remove already existing ZIP archive."];
     }
     $zip = new ZipArchive();
     if ($zip->open($archivelocation, ZIPARCHIVE::CREATE) !== true) {
+        logEvent($mysqli, $_SESSION['user_id'], 'error', 'project.version.download', 'Could not open the ZIP archive for writing.');
         return ["error"=>1, "error_message"=>"Could not open the ZIP archive for writing.", "archive"=>""];
     }
 
@@ -38,7 +42,7 @@ function compress_version(int $id) { // returns an array with keys error, error_
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    $archive = compress_version($_GET['id'])["archive"];
+    $archive = compressVersion($_GET['id'])["archive"];
     header('Content-Type: application/zip');
     header('Content-Disposition: attachment; filename="' . $_GET['id'] . '.zip"');
     header('Content-Length: ' . filesize($archive));

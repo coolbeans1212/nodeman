@@ -34,6 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt = $mysqli->prepare($sql);
     $stmt->bind_param('i', $payload['id']);
     if (!$stmt->execute()) {
+        logEvent($mysqli, $_SESSION['user_id'], "error", "project.version.delete", sprintf("An SQL error occured while trying to get the current version of project %s", $project['name']));
         sqlError($mysqli->error);
     }
     $result = $stmt->get_result();
@@ -41,6 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $currentversion = $currentversion['current_version'];
     if ($currentversion == $payload['id']) {
         http_response_code(409);
+        logEvent($mysqli, $_SESSION['user_id'], "error", "project.version.delete", sprintf("Could not delete the in-use version %s for project %s", $version['name'], $project['name']));
         die("This version is in use. Please revert to another version before deleting this one.");
     }
     if ($payload['deleteallfiles']) {
@@ -48,6 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt = $mysqli->prepare($sql);
         $stmt->bind_param('i', $payload['id']);
         if (!$stmt->execute()) {
+            logEvent($mysqli, $_SESSION['user_id'], "error", "project.version.files.delete", sprintf("An SQL error occured while trying to get the location of project %s", $project['name']));
             sqlError($mysqli->error);
         }
         $result = $stmt->get_result();
@@ -61,6 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt = $mysqli->prepare($sql);
     $stmt->bind_param('i', $payload['id']);
     if (!$stmt->execute()) {
+        logEvent($mysqli, $_SESSION['user_id'], "error", "project.version.delete", sprintf("An SQL error occured while trying to delete project %s", $project['name']));
         sqlError($mysqli->error);
     }
     logEvent($mysqli, $_SESSION['user_id'], 'info', 'project.version.delete', sprintf('Version %1$s of project %2$s was deleted.', $version['name'], $project['name']));

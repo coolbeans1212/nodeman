@@ -23,10 +23,12 @@ if ($payload['id'] == -1) { // id of -1 == new proj
     $sql = 'INSERT INTO projects (name, location, main_file) VALUES (?, ?, ?)';
     $stmt = $mysqli->stmt_init();
     if (!$stmt->prepare($sql)) {
+        logEvent($mysqli, $_SESSION['user_id'], "error", "project.config.create", sprintf("An SQL error occured while trying to create project %s", $payload['name']));
         sqlError($mysqli->error);
     }
     $stmt->bind_param('sss', $payload['name'], $payload['location'], $payload['main_file']);
     if (!$stmt->execute()) {
+        logEvent($mysqli, $_SESSION['user_id'], "error", "project.config.create", sprintf("An SQL error occured while trying to create project %s", $payload['name']));
         sqlError($mysqli->error);
     }
     logEvent($mysqli, $_SESSION["user_id"], 'info', 'project.config.create', sprintf('New project %1$s was created at %2$s', $payload['name'], $payload['location']));
@@ -37,19 +39,23 @@ if ($payload['id'] == -1) { // id of -1 == new proj
         $sql = "UPDATE projects SET current_version = null WHERE id = ?"; // we need to do this or sql will cry about foreign keys
         $stmt = $mysqli->stmt_init();
         if (!$stmt->prepare($sql)) {
+            logEvent($mysqli, $_SESSION['user_id'], "error", "project.config.delete", sprintf("An SQL error occured while trying to delete project %s", $project['name']));
             sqlError($mysqli->error);
         }
         $stmt->bind_param('i', $payload['id']);
         if (!$stmt->execute()) {
+            logEvent($mysqli, $_SESSION['user_id'], "error", "project.config.delete", sprintf("An SQL error occured while trying to delete project %s", $project['name']));
             sqlError($mysqli->error);
         }
         $sql = 'DELETE FROM projects WHERE id = ?';
         $stmt = $mysqli->stmt_init();
         if (!$stmt->prepare($sql)) {
+            logEvent($mysqli, $_SESSION['user_id'], "error", "project.config.delete", sprintf("An SQL error occured while trying to delete project %s", $project['name']));
             sqlError($mysqli->error);
         }
         $stmt->bind_param('i', $payload['id']);
         if (!$stmt->execute()) {
+            logEvent($mysqli, $_SESSION['user_id'], "error", "project.config.delete", sprintf("An SQL error occured while trying to delete project %s", $project['name']));
             sqlError($mysqli->error);
         }
         logEvent($mysqli, $_SESSION["user_id"], 'info', 'project.config.delete', sprintf('Project %s was deleted', $project['name']));
@@ -58,10 +64,12 @@ if ($payload['id'] == -1) { // id of -1 == new proj
         $sql = 'UPDATE projects SET name = ?, location = ?, main_file = ? WHERE id = ?';
         $stmt = $mysqli->stmt_init();
         if (!$stmt->prepare($sql)) {
+            logEvent($mysqli, $_SESSION['user_id'], "error", "project.config.update", sprintf("An SQL error occured while trying to update project %s", $payload['name']));
             sqlError($mysqli->error);
         }
         $stmt->bind_param('sssi', $payload['name'], $payload['location'], $payload['main_file'], $payload['id']);
         if (!$stmt->execute()) {
+            logEvent($mysqli, $_SESSION['user_id'], "error", "project.config.update", sprintf("An SQL error occured while trying to update project %s", $payload['name']));
             sqlError($mysqli->error);
         }
         logEvent($mysqli, $_SESSION["user_id"], 'info', 'project.config.update', sprintf('Project %1$s was updated. Previous: name = %2$s, location = %3$s, main_file = %4$s. Now: name = %5$s, location = %6$s, main_file = %7$s',

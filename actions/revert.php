@@ -21,14 +21,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt = $mysqli->prepare($sql);
     $stmt->bind_param('i', $payload['id']);
     if (!$stmt->execute()) {
-        sqlError($mysqli->error);
+        logEvent($mysqli, $_SESSION['user_id'], "error", "project.version.revert", sprintf("An SQL error occured while trying to set the last used date of version %1$s in project %2$s.", $version['name'], $projectBefore['name']));
+        sqlError($stmt->error);
     }
 
     $sql = "UPDATE projects SET current_version = ? WHERE id = (SELECT project_id FROM versions WHERE id = ?)";
     $stmt = $mysqli->prepare($sql);
     $stmt->bind_param('ii', $payload['id'], $payload['id']);
     if (!$stmt->execute()) {
-        sqlError($mysqli->error);
+        logEvent($mysqli, $_SESSION['user_id'], "error", "project.version.revert", sprintf("An SQL error occured while trying to revert project %1$s from version %2$s to version %3$s.", $projectBefore['name'], $versionBefore['name'], $version['name']));
+        sqlError($stmt->error);
     }
     logEvent($mysqli, $_SESSION['user_id'], 'info', 'project.version.revert', sprintf('Project %1$s was reverted from version %2$s to version %3$s.', $projectBefore['name'], $versionBefore['name'], $version['name']));
 
@@ -37,6 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt = $mysqli->prepare($sql);
         $stmt->bind_param('i', $payload['id']);
         if (!$stmt->execute()) {
+            logEvent($mysqli, $_SESSION['user_id'], "error", "project.version.revert", sprintf("An SQL error occured while trying to get the project of version %1$s.", $version['name']));
             sqlError($mysqli->error);
         }
         $result = $stmt->get_result();
