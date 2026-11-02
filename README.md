@@ -1,13 +1,14 @@
 # NODEMAN
 PHP Utility for managing node.js projects, using the 7.css library (or 98.css, or xp.css: you can customise) for styling. It can handle multiple projects at once, with multiple different versions for each project. It can also manage Node.js dependencies with NPM.
 ## Requirements
-- GNU/Linux Debian or similar.
-- PHP >=8.4.
-- MariaDB or MySQL.
-- A web server (such as Apache).
-- Node.js.
-OR
-- Docker
+- Installing manually:
+  - GNU/Linux Debian or similar.
+  - PHP >=8.4.
+  - MariaDB or MySQL.
+  - A web server (such as Apache).
+  - Node.js.
+- Installing with Docker:
+  - Docker
 ## Installation Guide
 See [INSTALL-DOCKER.md](INSTALL-DOCKER.md)
 <hr>
