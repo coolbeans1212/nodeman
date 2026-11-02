@@ -2,6 +2,7 @@
 This guide assumes you already have Docker installed on an amd64 or arm64 processor.
 > [!NOTE]
 > You can install this manually. See INSTALL.md
+
 Make a new directory. Inside that directory, make a file named `.env` containing DB_PASSWORD=CHANGEME, but actually change CHANGEME to something more secure.  
 Run the following commands inside that directory (if you are on Windows®, run this in cmd instead of PowerShell):
 ```
