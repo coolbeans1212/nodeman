@@ -105,7 +105,7 @@ Open localhost/account/login.php and login with your details. You should be gree
 Decide where you want NODEMAN's data to be stored. For example, if you want the projects to be stored in "/home/matei/nodeman/" and the logs in "/var/log/nodeman/":  
 Run the following commands:
 ```
-sudo mdkir /home/matei/nodeman -p
+sudo mkdir /home/matei/nodeman -p
 sudo chmod +x /home /home/matei /home/matei/nodeman
 sudo chown www-data:www-data /home/matei/nodeman -R
 sudo chmod 740 /home/matei/nodeman -R
