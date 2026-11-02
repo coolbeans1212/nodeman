@@ -1,0 +1,33 @@
+services:
+  web:
+    image: ghcr.io/coolbeans1212/nodeman:latest
+    ports:
+      - "80:80"
+    environment:
+      DB_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD}
+    volumes:
+      - projects:/home/nodeman/projects
+      - logs:/var/log/nodeman
+      - data:/var/nodeman
+      - npmcache:/var/www/.npm
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: ghcr.io/coolbeans1212/nodeman-db:latest
+    environment:
+      MARIADB_DATABASE: nodeman
+      MARIADB_USER: nodeman
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_RANDOM_ROOT_PASSWORD: "1"
+    volumes:
+      - dbdata:/var/lib/mysql
+    restart: unless-stopped
+
+volumes:
+  projects:
+  logs:
+  data:
+  npmcache:
+  dbdata:

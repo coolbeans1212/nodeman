@@ -70,7 +70,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             </div>
         </div>
         <div class="window-body has-space">
-            Administrators: to make a new account, please follow the instructions in INSTALL.md, under the subheading "Set up the database".<br>
+            Administrators: to make a new account, please follow the instructions in INSTALL.md, under the subheading "Set up the database", or in INSTALL-DOCKER.md if you are using Docker.<br>
             Not logging in? Make sure that the correct table definitions are set in the correct databases, and that there is at least one account in the users table.</br>
         </div>
     </div>

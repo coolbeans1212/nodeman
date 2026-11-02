@@ -1,9 +1,11 @@
-# NODEMAN: Installation  
+# NODEMAN: Manual Installation  
 This guide assumes a new Debian GNU/Linux 13 distribution is installed on the server, with no modifications.  
+> [!NOTE]
+> You can install this using Docker. See INSTALL-DOCKER.md
 ## Install dependencies  
 Run the following commands in the terminal:  
 ```
-sudo apt upgrade -y && sudo apt update -y
+sudo apt update -y && sudo apt upgrade -y
 sudo apt install apache2 mariadb-server php8.4 php8.4-mysql php8.4-cli php8.4-xml php8.4-zip libapache2-mod-php8.4 git curl ca-certificates unzip nodejs npm -y
 ```
 > [!NOTE]  

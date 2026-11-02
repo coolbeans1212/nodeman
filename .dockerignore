@@ -1,0 +1,7 @@
+.git
+.env
+.github
+docker/Dockerfile*
+docker-compose*.yml
+*.md
+*.example
