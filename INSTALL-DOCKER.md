@@ -14,7 +14,7 @@ If you are on Windows®, run the following commands in PowerShell:
 $hash = docker compose exec -T web php -r "echo password_hash('yourpassword', PASSWORD_BCRYPT);"
 "INSERT INTO users (username, password, admin) VALUES ('user', '$hash', 1);" | docker compose exec -T db sh -c 'mariadb -u nodeman -p"$MARIADB_PASSWORD" nodeman'
 ```
-(replace `yourpassword` with a secure password and `user` with your desired username)
+(replace `yourpassword` with a secure password and `user` with your desired username)  
 If you are on any other operating system, run the following commands:
 ```
 HASH=$(docker compose exec -T web php -r 'echo password_hash("yourpassword", PASSWORD_BCRYPT);')
